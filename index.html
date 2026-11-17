@@ -186,7 +186,6 @@
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <!-- Columna Izquierda: Apuntes -->
                 <div class="lg:col-span-8 space-y-6">
                     <div class="mb-4">
                         <input type="text" id="search-apuntes" oninput="filterApuntes()" placeholder="Buscar apunte..." class="bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm w-full sm:w-80 shadow-sm">
@@ -194,7 +193,6 @@
                     <div id="apuntes-list-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 </div>
 
-                <!-- Columna Derecha: Foro / Chat de la Materia (IDEA 1) -->
                 <div class="lg:col-span-4 space-y-4">
                     <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm sticky top-28">
                         <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center space-x-2">
@@ -217,7 +215,7 @@
             </div>
         </section>
 
-        <!-- VISTA: MIS FAVORITOS (IDEA 6) -->
+        <!-- VISTA: MIS FAVORITOS -->
         <section id="view-favoritos" class="view-section hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <div class="mb-8">
                 <button onclick="switchView('home')" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold flex items-center space-x-2 mb-4">
@@ -240,7 +238,7 @@
             <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-6 sm:p-10">
                 <div class="text-center max-w-lg mx-auto mb-8">
                     <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Solicitar Usuario y Contraseña</h2>
-                    <p class="text-slate-600 text-xs sm:text-sm mt-2">Completá tus datos para que el Centro de Estudiantes apruebe tu acceso online.</p>
+                    <p class="text-slate-600 text-xs sm:text-sm mt-2">Completá tus datos (asegurate de poner un correo válido) para recibir tus credenciales.</p>
                 </div>
                 <form id="form-solicitud" onsubmit="handleSolicitudSubmit(event)" class="space-y-4 sm:space-y-6">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
@@ -269,8 +267,8 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Contacto (Correo o Teléfono)</label>
-                        <input type="text" id="sol-contacto" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="tucorreo@gmail.com">
+                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Correo Electrónico (Para recibir credenciales)</label>
+                        <input type="email" id="sol-contacto" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="tucorreo@gmail.com">
                     </div>
                     <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg text-sm">Enviar Solicitud a la Nube</button>
                 </form>
@@ -301,7 +299,7 @@
 
             <div id="admin-tab-solicitudes" class="admin-tab-content space-y-6">
                 <div class="bg-white rounded-2xl border border-slate-200 p-6">
-                    <h3 class="text-lg font-bold text-slate-900 mb-4">Alumnos Pendientes en la Nube</h3>
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Alumnos Pendientes (Al aprobar se enviará correo automático por Supabase Auth)</h3>
                     <div id="admin-solicitudes-list" class="space-y-4"><p class="text-slate-500 text-sm">Cargando...</p></div>
                 </div>
             </div>
@@ -467,7 +465,7 @@
                                     <th class="p-3">Nombre</th>
                                     <th class="p-3">DNI</th>
                                     <th class="p-3">Carrera / Año</th>
-                                    <th class="p-3">Usuario</th>
+                                    <th class="p-3">Usuario / Correo</th>
                                     <th class="p-3 text-center">Acciones</th>
                                 </tr>
                             </thead>
@@ -529,12 +527,12 @@
             </div>
             <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Usuario</label>
-                    <input type="text" id="login-user" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Usuario o Correo</label>
+                    <input type="text" id="login-user" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="Tu usuario o correo">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">Contraseña</label>
-                    <input type="password" id="login-pass" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm">
+                    <input type="password" id="login-pass" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="••••••••">
                 </div>
                 <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg">Ingresar</button>
             </form>
@@ -561,7 +559,6 @@
             document.getElementById('footer-brand-title').innerText = identity.name + ' - ISFD Mercedes';
             document.querySelectorAll('#nav-logo-img, .modal-logo-img, .footer-logo-img, #preview-logo-box').forEach(img => { if (img) img.src = identity.logo; });
             
-            // Mostrar u ocultar enlace de favoritos según sesión
             if (currentUser) {
                 document.getElementById('nav-favoritos-link').classList.remove('hidden');
                 document.getElementById('mobile-favoritos-link').classList.remove('hidden');
@@ -724,7 +721,6 @@
             await renderMateriaChat();
         }
 
-        // --- FILTRAR Y RENDERIZAR APUNTES + FAVORITOS + ESTRELLAS (Ideas 3 y 6) ---
         async function filterApuntes() {
             const query = document.getElementById('search-apuntes').value.toLowerCase();
             const { data: apuntes } = await _db.from('apuntes').select('*').eq('carrera', selectedCareerId).eq('anio', selectedYear).eq('materia', selectedMateria);
@@ -745,20 +741,17 @@
 
             container.innerHTML = filtered.map(ap => {
                 const isFav = userFavs.includes(ap.id);
-                const estrellas = ap.estrellas_avg || 5; // Promedio simulado o real
                 return `
                     <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 flex flex-col justify-between relative">
                         ${currentUser ? `<button onclick="toggleFavorito(${ap.id})" class="absolute top-6 right-6 text-xl ${isFav ? 'text-rose-500' : 'text-slate-300 hover:text-rose-400'}"><i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i></button>` : ''}
                         <div>
                             <div class="flex items-center space-x-2 mb-3">
                                 <span class="text-xs font-bold px-3 py-1 rounded-full border ${ap.tipo === 'PDF' ? 'bg-rose-50 text-rose-600 border-rose-200' : 'bg-blue-50 text-blue-600 border-blue-200'}">${ap.tipo}</span>
-                                <div class="text-amber-400 text-xs"><i class="fa-solid fa-star"></i> <span class="text-slate-600 font-semibold">${estrellas}</span></div>
                             </div>
                             <h4 class="font-bold text-slate-900 text-base pr-8">${ap.titulo}</h4>
                             <p class="text-slate-600 text-xs mt-2">${ap.descripcion || ''}</p>
                         </div>
                         <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-                            <!-- Sistema de Estrellas (Idea 3) -->
                             <div class="flex space-x-1 text-slate-300 text-xs cursor-pointer">
                                 <span onclick="calificarApunte(${ap.id}, 1)" class="hover:text-amber-400">★</span>
                                 <span onclick="calificarApunte(${ap.id}, 2)" class="hover:text-amber-400">★</span>
@@ -776,7 +769,6 @@
         async function toggleFavorito(apunteId) {
             if (!currentUser) return alert('Iniciá sesión para guardar favoritos.');
             const username = currentUser.username || currentUser.name;
-            
             const { data: existing } = await _db.from('favoritos').select('*').eq('usuario', username).eq('apunte_id', apunteId);
             if (existing && existing.length > 0) {
                 await _db.from('favoritos').delete().eq('usuario', username).eq('apunte_id', apunteId);
@@ -787,7 +779,7 @@
         }
 
         async function calificarApunte(apunteId, nota) {
-            alert(`¡Gracias por calificar con ${nota} estrellas! Tu opinión ayuda a la comunidad.`);
+            alert(`¡Gracias por calificar con ${nota} estrellas!`);
         }
 
         async function renderFavoritosView() {
@@ -819,7 +811,6 @@
             `).join('');
         }
 
-        // --- CHAT / FORO DE CONSULTAS POR MATERIA (Idea 1) ---
         async function renderMateriaChat() {
             const { data: coms } = await _db.from('comentarios_materias').select('*').eq('carrera', selectedCareerId).eq('anio', selectedYear).eq('materia', selectedMateria).order('created_at', { ascending: true });
             const list = document.getElementById('materia-chat-list');
@@ -843,8 +834,7 @@
             if (!mensaje) return;
 
             const { error } = await _db.from('comentarios_materias').insert([{ carrera: selectedCareerId, anio: selectedYear, materia: selectedMateria, autor, mensaje }]);
-            if (error) { alert('Error al enviar: ' + error.message); return; }
-
+            if (error) { alert('Error: ' + error.message); return; }
             document.getElementById('chat-mensaje').value = '';
             await renderMateriaChat();
         }
@@ -927,14 +917,36 @@
             container.innerHTML = solicitudes.map(s => {
                 const car = careers.find(c => c.id === s.carrera);
                 const sugUser = s.nombre.toLowerCase().split(' ')[0] + Math.floor(Math.random() * 900 + 100);
-                return `<div class="bg-slate-50 rounded-2xl border border-slate-200 p-4 flex justify-between items-center"><div><h4 class="font-bold text-slate-900">${s.nombre} (DNI: ${s.dni})</h4><p class="text-xs text-slate-600">${car ? car.name : s.carrera} • ${s.anio}</p></div><button onclick="aprobarSolicitud(${s.id}, '${sugUser}', 'isfd2026', '${s.nombre}', '${s.dni}', '${s.carrera}', '${s.anio}', '${s.contacto}')" class="bg-emerald-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-md">Aprobar</button></div>`;
+                return `<div class="bg-slate-50 rounded-2xl border border-slate-200 p-4 flex justify-between items-center gap-4"><div><h4 class="font-bold text-slate-900">${s.nombre} (DNI: ${s.dni})</h4><p class="text-xs text-slate-600">${car ? car.name : s.carrera} • ${s.anio}</p><p class="text-xs text-indigo-600">Correo: ${s.contacto}</p></div><button onclick="aprobarSolicitud(${s.id}, '${sugUser}', 'isfd2026', '${s.nombre}', '${s.dni}', '${s.carrera}', '${s.anio}', '${s.contacto}')" class="bg-emerald-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-md flex-shrink-0">Aprobar y Enviar Correo</button></div>`;
             }).join('');
         }
 
+        // --- APROBAR Y ENVIAR CREDENCIALES POR SUPABASE AUTH (Mejora solicitada) ---
         async function aprobarSolicitud(id, username, pass, nombre, dni, carrera, anio, contacto) {
+            if (!contacto.includes('@')) {
+                alert('El contacto del alumno no es un correo electrónico válido.');
+                return;
+            }
+
+            // 1. Crear en Supabase Auth (envía correo automático)
+            const { error: authError } = await _db.auth.signUp({
+                email: contacto,
+                password: pass,
+                options: { data: { nombre, dni, carrera, anio, usuario: username } }
+            });
+
+            if (authError) {
+                alert('Error al registrar en Supabase Auth: ' + authError.message);
+                return;
+            }
+
+            // 2. Guardar en tabla alumnos
             await _db.from('alumnos').insert([{ nombre, dni, carrera, anio, usuario: username, pass, contacto }]);
+            
+            // 3. Borrar solicitud
             await _db.from('solicitudes').delete().eq('id', id);
-            alert(`¡Aprobado!\nUsuario: ${username}\nPass: ${pass}`);
+
+            alert(`¡Alumno aprobado con éxito!\nSe dio de alta en Supabase Auth y se envió el correo a ${contacto}.\nUsuario: ${username}\nPass: ${pass}`);
             await renderAdminDashboard();
         }
 
@@ -1054,12 +1066,12 @@
             const { data: careers } = await _db.from('carreras').select('*');
             document.getElementById('admin-alumnos-tbody').innerHTML = (alumnos || []).map(al => {
                 const car = careers ? careers.find(c => c.id === al.carrera) : null;
-                return `<tr class="border-b"><td class="p-3 font-bold">${al.nombre}</td><td class="p-3">${al.dni}</td><td class="p-3">${car ? car.name : al.carrera} (${al.anio})</td><td class="p-3 font-mono text-indigo-600">${al.usuario} / ${al.pass}</td><td class="p-3 text-center"><button onclick="deleteAlumno(${al.id})" class="text-rose-600"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                return `<tr class="border-b"><td class="p-3 font-bold">${al.nombre}</td><td class="p-3">${al.dni}</td><td class="p-3">${car ? car.name : al.carrera} (${al.anio})</td><td class="p-3 font-mono text-indigo-600">${al.usuario} <br><span class="text-xs text-slate-500">${al.contacto}</span></td><td class="p-3 text-center"><button onclick="deleteAlumno(${al.id})" class="text-rose-600"><i class="fa-solid fa-trash"></i></button></td></tr>`;
             }).join('');
         }
 
         async function deleteAlumno(id) {
-            if (!confirm('¿Eliminar?')) return;
+            if (!confirm('¿Eliminar alumno?')) return;
             await _db.from('alumnos').delete().eq('id', id);
             await renderAdminAlumnos();
         }
@@ -1080,6 +1092,7 @@
             event.preventDefault();
             const u = document.getElementById('login-user').value.trim();
             const p = document.getElementById('login-pass').value.trim();
+
             if (u === 'admin' && p === 'admin123') {
                 currentUser = { role: 'admin', username: 'admin', name: 'Administrador' };
                 localStorage.setItem('isfd_current_user', JSON.stringify(currentUser));
@@ -1088,20 +1101,29 @@
                 switchView('admin');
                 return;
             }
-            const { data: alumnos } = await _db.from('alumnos').select('*').eq('usuario', u).eq('pass', p);
-            if (alumnos && alumnos.length > 0) {
-                currentUser = { role: 'alumno', username: alumnos[0].usuario, name: alumnos[0].nombre };
-                localStorage.setItem('isfd_current_user', JSON.stringify(currentUser));
-                closeLoginModal();
-                updateNavAuth();
-                switchView('home');
-                alert(`¡Bienvenido/a, ${alumnos[0].nombre}!`);
+
+            // Buscar si ingresó con su nombre de usuario para obtener su email de Auth
+            const { data: alumnoMatch } = await _db.from('alumnos').select('contacto, nombre').eq('usuario', u).single();
+            const emailLogin = alumnoMatch ? alumnoMatch.contacto : u;
+
+            const { data, error } = await _db.auth.signInWithPassword({ email: emailLogin, password: p });
+
+            if (error) {
+                alert('Credenciales incorrectas o usuario no encontrado.');
                 return;
             }
-            alert('Credenciales incorrectas.');
+
+            const nombreReal = alumnoMatch ? alumnoMatch.name : data.user.email;
+            currentUser = { role: 'alumno', username: u, name: nombreReal };
+            localStorage.setItem('isfd_current_user', JSON.stringify(currentUser));
+            closeLoginModal();
+            updateNavAuth();
+            switchView('home');
+            alert(`¡Bienvenido/a, ${nombreReal}!`);
         }
 
         function logout() {
+            _db.auth.signOut();
             currentUser = null;
             localStorage.removeItem('isfd_current_user');
             updateNavAuth();
