@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entre Todos - ISFD</title>
+    <title>Centro de Estudiantes - ISFD</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -33,7 +35,7 @@
                     <img id="nav-logo-img" src="logo.jpg" alt="Logo" class="w-full h-full object-cover">
                 </div>
                 <div>
-                    <h1 id="brand-title" class="text-base sm:text-xl font-bold tracking-tight leading-tight">Entre Todos </h1>
+                    <h1 id="brand-title" class="text-base sm:text-xl font-bold tracking-tight leading-tight">Centro de Estudiantes</h1>
                     <p id="brand-subtitle" class="text-[11px] sm:text-xs text-indigo-200 font-medium">ISFD Mercedes • Corrientes</p>
                 </div>
             </div>
@@ -70,7 +72,7 @@
                     <div class="lg:col-span-7 space-y-6">
                         <span class="inline-flex items-center space-x-2 bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase border border-indigo-500/30">
                             <i class="fa-solid fa-graduation-cap"></i>
-                            <span>Plataforma Oficial del Alumnado 2027 </span>
+                            <span>Plataforma Oficial del Alumnado</span>
                         </span>
                         <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
                             Todo tu material de estudio y novedades en un solo lugar.
@@ -104,7 +106,7 @@
                                 <span class="bg-emerald-500/20 text-emerald-300 text-[10px] px-2.5 py-1 rounded-full font-medium">Oficial</span>
                             </div>
                             <div id="hero-latest-notice" class="text-xs sm:text-sm text-indigo-100 space-y-2">
-                                <!-- Dinámico -->
+                                <p class="text-xs text-indigo-200">Cargando avisos desde la nube...</p>
                             </div>
                             <button onclick="switchView('novedades')" class="w-full text-center text-xs font-semibold text-indigo-300 hover:text-white pt-2 block">
                                 Ver todas las novedades y fechas →
@@ -121,7 +123,7 @@
                     <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Seleccioná tu carrera para ver los apuntes</h2>
                 </div>
                 <div id="home-careers-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                    <!-- Dinámico -->
+                    <div class="col-span-full text-center py-8 text-slate-500">Cargando carreras desde Supabase...</div>
                 </div>
             </div>
         </section>
@@ -138,29 +140,23 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <!-- Columna Izquierda: Novedades / Comunicados -->
                 <div class="lg:col-span-7 space-y-6">
                     <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
                         <i class="fa-solid fa-newspaper text-indigo-600"></i>
                         <span>Últimos Comunicados</span>
                     </h3>
                     <div id="public-novedades-list" class="space-y-4">
-                        <!-- Dinámico -->
+                        <p class="text-slate-500 text-sm">Cargando comunicados...</p>
                     </div>
                 </div>
-
-                <!-- Columna Derecha: Calendario y Fechas Importantes -->
                 <div class="lg:col-span-5 space-y-6">
                     <div class="bg-indigo-900 text-white rounded-3xl p-6 sm:p-8 shadow-lg relative overflow-hidden">
-                        <div class="absolute -right-6 -bottom-6 text-white/5 text-9xl font-bold pointer-events-none">
-                            <i class="fa-solid fa-calendar-days"></i>
-                        </div>
                         <h3 class="text-lg font-bold mb-4 flex items-center space-x-2 relative z-10">
                             <i class="fa-solid fa-calendar-check text-indigo-300"></i>
                             <span>Próximas Fechas Clave</span>
                         </h3>
                         <div id="public-calendario-list" class="space-y-4 relative z-10">
-                            <!-- Dinámico -->
+                            <p class="text-indigo-200 text-sm">Cargando calendario...</p>
                         </div>
                     </div>
                 </div>
@@ -201,7 +197,7 @@
             <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-6 sm:p-10">
                 <div class="text-center max-w-lg mx-auto mb-8">
                     <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Solicitar Usuario y Contraseña</h2>
-                    <p class="text-slate-600 text-xs sm:text-sm mt-2">Completá tus datos para que el Centro de Estudiantes apruebe tu acceso.</p>
+                    <p class="text-slate-600 text-xs sm:text-sm mt-2">Completá tus datos para que el Centro de Estudiantes apruebe tu acceso online.</p>
                 </div>
                 <form id="form-solicitud" onsubmit="handleSolicitudSubmit(event)" class="space-y-4 sm:space-y-6">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
@@ -233,7 +229,7 @@
                         <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Contacto (Correo o Teléfono)</label>
                         <input type="text" id="sol-contacto" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="tucorreo@gmail.com">
                     </div>
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg text-sm">Enviar Solicitud</button>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg text-sm">Enviar Solicitud a la Nube</button>
                 </form>
             </div>
         </section>
@@ -242,7 +238,7 @@
         <section id="view-admin" class="view-section hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-b border-slate-200 pb-6">
                 <div>
-                    <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full uppercase">Panel de Gestión</span>
+                    <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full uppercase">Panel de Gestión Online</span>
                     <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Administración del Centro</h2>
                 </div>
                 <div class="flex items-center space-x-3">
@@ -253,8 +249,8 @@
 
             <!-- Pestañas Admin -->
             <div class="flex flex-wrap gap-2 mb-8 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm">
-                <button onclick="switchAdminTab('solicitudes')" id="tab-btn-solicitudes" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-indigo-600 text-white shadow-sm">Solicitudes <span id="badge-solicitudes-count" class="ml-1 bg-white text-indigo-600 px-2 py-0.5 rounded-full text-xs font-bold">0</span></button>
-                <button onclick="switchAdminTab('novedades')" id="tab-btn-novedades" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">Gestionar Novedades y Fechas</button>
+                <button onclick="switchAdminTab('solicitudes')" id="tab-btn-solicitudes" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-indigo-600 text-white shadow-sm">Solicitudes Online <span id="badge-solicitudes-count" class="ml-1 bg-white text-indigo-600 px-2 py-0.5 rounded-full text-xs font-bold">0</span></button>
+                <button onclick="switchAdminTab('novedades')" id="tab-btn-novedades" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">Novedades y Fechas</button>
                 <button onclick="switchAdminTab('material')" id="tab-btn-material" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">Cargar Material</button>
                 <button onclick="switchAdminTab('carreras')" id="tab-btn-carreras" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">Carreras</button>
                 <button onclick="switchAdminTab('alumnos')" id="tab-btn-alumnos" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">Alumnos</button>
@@ -264,22 +260,19 @@
             <!-- TAB: SOLICITUDES -->
             <div id="admin-tab-solicitudes" class="admin-tab-content space-y-6">
                 <div class="bg-white rounded-2xl border border-slate-200 p-6">
-                    <h3 class="text-lg font-bold text-slate-900 mb-4">Alumnos Pendientes de Aprobación</h3>
-                    <div id="admin-solicitudes-list" class="space-y-4"></div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Alumnos Pendientes en la Nube</h3>
+                    <div id="admin-solicitudes-list" class="space-y-4">
+                        <p class="text-slate-500 text-sm">Cargando solicitudes...</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- TAB: GESTIONAR NOVEDADES Y FECHAS (NUEVO) -->
+            <!-- TAB: NOVEDADES -->
             <div id="admin-tab-novedades" class="admin-tab-content hidden space-y-8">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <!-- Formulario para crear Aviso / Fecha -->
                     <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                        <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center space-x-2">
-                            <i class="fa-solid fa-circle-plus text-indigo-600"></i>
-                            <span>Publicar Aviso o Fecha Clave</span>
-                        </h3>
+                        <h3 class="text-lg font-bold text-slate-900 mb-4">Publicar Aviso o Fecha Clave</h3>
                         <form onsubmit="handleSaveNovedad(event)" class="space-y-4">
-                            <input type="hidden" id="nov-edit-id">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-1">Tipo de Publicación</label>
                                 <select id="nov-tipo" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
@@ -289,23 +282,21 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-1">Título</label>
-                                <input type="text" id="nov-titulo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm" placeholder="Ej. Inscripción a Mesas de Examen">
+                                <input type="text" id="nov-titulo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm" placeholder="Título de la novedad">
                             </div>
                             <div id="div-nov-fecha" class="hidden">
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Fecha del Evento (Ej. 24 de Noviembre)</label>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Fecha del Evento</label>
                                 <input type="text" id="nov-fecha-txt" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm" placeholder="Ej. 15 al 20 de Dic">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Descripción / Detalle</label>
-                                <textarea id="nov-desc" rows="3" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm" placeholder="Detalles de la información..."></textarea>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Descripción</label>
+                                <textarea id="nov-desc" rows="3" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm" placeholder="Detalle..."></textarea>
                             </div>
-                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow-md">Publicar en el Sitio</button>
+                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow-md">Publicar</button>
                         </form>
                     </div>
-
-                    <!-- Listado de Novedades y Fechas Activas -->
                     <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                        <h3 class="text-lg font-bold text-slate-900 mb-4">Publicaciones Activas</h3>
+                        <h3 class="text-lg font-bold text-slate-900 mb-4">Publicaciones en la Nube</h3>
                         <div id="admin-novedades-list" class="space-y-4 max-h-[500px] overflow-y-auto"></div>
                     </div>
                 </div>
@@ -314,7 +305,7 @@
             <!-- TAB: MATERIAL -->
             <div id="admin-tab-material" class="admin-tab-content hidden space-y-6">
                 <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 max-w-3xl">
-                    <h3 class="text-lg font-bold text-slate-900 mb-6">Subir Nuevo Apunte o Material (PDF / DOCX)</h3>
+                    <h3 class="text-lg font-bold text-slate-900 mb-6">Subir Nuevo Apunte (Cloud Storage)</h3>
                     <form onsubmit="handleUploadMaterial(event)" class="space-y-6">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
@@ -350,9 +341,13 @@
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-2">Descripción</label>
-                            <textarea id="up-desc" rows="3" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="Detalle del contenido..."></textarea>
+                            <textarea id="up-desc" rows="3" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="Detalle..."></textarea>
                         </div>
-                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg">Publicar Material</button>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Archivo PDF o DOCX</label>
+                            <input type="file" id="up-file" accept=".pdf,.doc,.docx" required class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700">
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg">Subir y Publicar Material</button>
                     </form>
                 </div>
             </div>
@@ -395,7 +390,7 @@
                                 <label class="block text-xs font-semibold text-slate-700 mb-1">Materias de 1° Año (separadas por coma)</label>
                                 <input type="text" id="car-materias-init" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm" placeholder="Pedagogía, Didáctica...">
                             </div>
-                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm">Guardar Carrera</button>
+                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm">Guardar Carrera en Nube</button>
                         </form>
                     </div>
                     <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-6">
@@ -408,7 +403,7 @@
             <!-- TAB: ALUMNOS -->
             <div id="admin-tab-alumnos" class="admin-tab-content hidden space-y-6">
                 <div class="bg-white rounded-2xl border border-slate-200 p-6">
-                    <h3 class="text-lg font-bold text-slate-900 mb-4">Alumnos Registrados</h3>
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Alumnos Registrados en la Nube</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
@@ -461,7 +456,7 @@
                 </div>
                 <div>
                     <p id="footer-brand-title" class="text-white font-bold text-sm">Centro de Estudiantes - ISFD Mercedes</p>
-                    <p class="text-xs text-slate-500">Plataforma de apuntes y gestión estudiantil.</p>
+                    <p class="text-xs text-slate-500">Plataforma conectada a la nube.</p>
                 </div>
             </div>
             <div class="text-xs text-slate-500 text-center md:text-right">
@@ -483,7 +478,7 @@
             <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">Usuario</label>
-                    <input type="text" id="login-user" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="admin o alumno">
+                    <input type="text" id="login-user" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="Tu usuario">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">Contraseña</label>
@@ -494,92 +489,13 @@
         </div>
     </div>
 
-    <!-- SCRIPT -->
+    <!-- SCRIPT CONECTADO A SUPABASE -->
     <script>
-        const defaultCareers = [
-            {
-                id: 'matematica',
-                name: 'Profesorado de Educación Secundaria en Matemática',
-                type: 'Profesorado',
-                duration: 4,
-                title: 'Profesor/a en Matemática',
-                description: 'Formación pedagógica y disciplinar en álgebra, geometría y cálculo.',
-                color: 'indigo',
-                materias: {
-                    '1° Año': ['Álgebra y Geometría I', 'Pedagogía', 'Historia Socioeducativa Argentina', 'Matemática Básica'],
-                    '2° Año': ['Cálculo I', 'Álgebra Lineal', 'Psicología Educacional', 'Didáctica de la Matemática'],
-                    '3° Año': ['Cálculo II', 'Probabilidad y Estadística', 'Geometría Analítica', 'Sujetos de la Educación'],
-                    '4° Año': ['Residencia Pedagógica', 'Investigación Educativa', 'Tecnologías en la Educación Matemática']
-                }
-            },
-            {
-                id: 'primaria',
-                name: 'Profesorado de Educación Primaria',
-                type: 'Profesorado',
-                duration: 4,
-                title: 'Profesor/a de Educación Primaria',
-                description: 'Capacitación integral para la enseñanza en el nivel primario.',
-                color: 'emerald',
-                materias: {
-                    '1° Año': ['Pedagogía', 'Alfabetización Inicial', 'Didáctica General', 'Matemática y su Didáctica I'],
-                    '2° Año': ['Ciencias Naturales y su Didáctica', 'Ciencias Sociales y su Didáctica', 'Psicología y Educación'],
-                    '3° Año': ['Literatura Infantil', 'Prácticas de la Enseñanza', 'Educación Sexual Integral (ESI)'],
-                    '4° Año': ['Residencia y Práctica Profesional', 'Instituciones Educativas', 'Ateneo Didáctico']
-                }
-            },
-            {
-                id: 'inicial',
-                name: 'Profesorado de Educación Inicial',
-                type: 'Profesorado',
-                duration: 4,
-                title: 'Profesor/a de Educación Inicial',
-                description: 'Abocado al desarrollo infantil temprano, juego y estimulación.',
-                color: 'amber',
-                materias: {
-                    '1° Año': ['Pedagogía', 'Psicología del Desarrollo Infantil', 'El Juego en la Educación Inicial', 'Arte y Expresión'],
-                    '2° Año': ['Didáctica de la Educación Inicial', 'Literatura Infantil', 'Ciencias Naturales y Sociales'],
-                    '3° Año': ['Prácticas en Jardín Maternal', 'Educación Inclusiva', 'Salud y Nutrición Infantil'],
-                    '4° Año': ['Residencia Integral', 'Gestión Institucional y Comunitaria']
-                }
-            },
-            {
-                id: 'software',
-                name: 'Tecnicatura Superior en Desarrollo de Software',
-                type: 'Tecnicatura Superior',
-                duration: 3,
-                title: 'Técnico/a Superior en Desarrollo de Software',
-                description: 'Programación, bases de datos y desarrollo full-stack moderno.',
-                color: 'violet',
-                materias: {
-                    '1° Año': ['Arquitectura de Computadoras', 'Programación I (PHP / Web)', 'Base de Datos I', 'Matemática Discreta'],
-                    '2° Año': ['Programación II (POO / MVC)', 'Base de Datos II (MySQL)', 'Ingeniería de Software', 'Redes y Sistemas Operativos'],
-                    '3° Año': ['Desarrollo Web Full-Stack', 'Práctica Profesionalizante', 'Seguridad Informática', 'Gestión de Proyectos Ágiles']
-                }
-            }
-        ];
-
-        const defaultApuntes = [
-            { id: 1, carrera: 'software', anio: '1° Año', materia: 'Programación I (PHP / Web)', tipo: 'PDF', titulo: 'Guía de Sintaxis y Funciones en PHP 8.4', desc: 'Conceptos fundamentales de variables, arreglos y formularios.', url: '#' },
-            { id: 2, carrera: 'software', anio: '1° Año', materia: 'Base de Datos I', tipo: 'DOCX', titulo: 'Apunte Teórico - Modelo Entidad Relación', desc: 'Normalización y claves.', url: '#' },
-            { id: 3, carrera: 'matematica', anio: '1° Año', materia: 'Álgebra y Geometría I', tipo: 'PDF', titulo: 'Vectores y Matrices - Práctico', desc: 'Ejercicios resueltos.', url: '#' }
-        ];
-
-        const defaultAlumnos = [
-            { id: 1, nombre: 'Santiago Ponce De León', dni: '44555666', carrera: 'software', anio: '2° Año', usuario: 'santi', pass: 'santi123', contacto: 'santi@gmail.com' }
-        ];
-
-        const defaultNovedades = [
-            { id: 1, tipo: 'aviso', titulo: 'Actualización del Banco de Apuntes', fechaTxt: '', desc: 'Ya se encuentran disponibles todos los nuevos PDFs y materiales de consulta subidos por los delegados de cada carrera.', fecha: '2026-11-15' },
-            { id: 2, tipo: 'fecha', titulo: 'Inscripción a Mesas de Exámen Final', fechaTxt: '20 al 25 de Noviembre', desc: 'Período oficial de inscripción habilitado a través de bedelía y sistema.', fecha: '2026-11-20' },
-            { id: 3, tipo: 'fecha', titulo: 'Cierre de Ciclo Lectivo', fechaTxt: '10 de Diciembre', desc: 'Última semana de entrega de trabajos prácticos integradores.', fecha: '2026-12-10' }
-        ];
-
-        if (!localStorage.getItem('isfd_careers')) localStorage.setItem('isfd_careers', JSON.stringify(defaultCareers));
-        if (!localStorage.getItem('isfd_apuntes')) localStorage.setItem('isfd_apuntes', JSON.stringify(defaultApuntes));
-        if (!localStorage.getItem('isfd_alumnos')) localStorage.setItem('isfd_alumnos', JSON.stringify(defaultAlumnos));
-        if (!localStorage.getItem('isfd_novedades')) localStorage.setItem('isfd_novedades', JSON.stringify(defaultNovedades));
-        if (!localStorage.getItem('isfd_solicitudes')) localStorage.setItem('isfd_solicitudes', JSON.stringify([]));
-        if (!localStorage.getItem('isfd_identity')) localStorage.setItem('isfd_identity', JSON.stringify({ logo: 'logo.jpg', name: 'Centro de Estudiantes', subtitle: 'ISFD Mercedes • Corrientes' }));
+        // CONFIGURACIÓN DE SUPABASE
+        const SUPABASE_URL = 'https://msdrsxowmtcpzrvbgcjn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zZHJzeG93bXRjcHpydmJnY2puIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ5MTQ1NDQsImV4cCI6MjExMDQ5MDU0NH0.a_rdtuSEPm23P11oaqxQNiPxIvmy8gei12Rmz3H0Ly0';
+        
+        const _db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentUser = JSON.parse(localStorage.getItem('isfd_current_user')) || null;
         let selectedCareerId = null;
@@ -597,38 +513,35 @@
             });
         }
 
-        function switchView(viewId, param1, param2) {
+        async function switchView(viewId, param1, param2) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
             document.getElementById('view-' + viewId).classList.remove('hidden');
             window.scrollTo(0, 0);
 
             if (viewId === 'home') {
-                renderHomeCareers();
-                renderHeroLatestNotice();
+                await renderHomeCareers();
+                await renderHeroLatestNotice();
             } else if (viewId === 'novedades') {
-                renderPublicNovedades();
-            } else if (viewId === 'carreras') renderCareersView(param1 || getFirstCareerId());
-            else if (viewId === 'materia') {
+                await renderPublicNovedades();
+            } else if (viewId === 'carreras') {
+                await renderCareersView(param1);
+            } else if (viewId === 'materia') {
                 selectedCareerId = param1;
                 selectedYear = param2.anio;
                 selectedMateria = param2.materia;
-                renderMateriaView();
-            } else if (viewId === 'solicitud') populateSolicitudCarreras();
-            else if (viewId === 'admin') {
+                await renderMateriaView();
+            } else if (viewId === 'solicitud') {
+                await populateSolicitudCarreras();
+            } else if (viewId === 'admin') {
                 if (!currentUser || currentUser.role !== 'admin') {
                     alert('Acceso no autorizado.');
                     openLoginModal();
                     switchView('home');
                     return;
                 }
-                renderAdminDashboard();
+                await renderAdminDashboard();
             }
             updateNavAuth();
-        }
-
-        function getFirstCareerId() {
-            const careers = JSON.parse(localStorage.getItem('isfd_careers'));
-            return careers.length > 0 ? careers[0].id : '';
         }
 
         function updateNavAuth() {
@@ -655,52 +568,57 @@
             }
         }
 
-        function renderHeroLatestNotice() {
-            const novedades = JSON.parse(localStorage.getItem('isfd_novedades')) || [];
-            const latest = novedades[0];
+        async function renderHeroLatestNotice() {
+            const { data: novedades } = await _db.from('novedades').select('*').order('created_at', { ascending: false }).limit(1);
+            const latest = novedades && novedades[0];
             const container = document.getElementById('hero-latest-notice');
             if (!latest) {
-                container.innerHTML = `<p class="text-xs text-indigo-200">No hay avisos recientes publicados.</p>`;
+                container.innerHTML = `<p class="text-xs text-indigo-200">No hay avisos recientes.</p>`;
                 return;
             }
             container.innerHTML = `
                 <p class="font-bold text-white">${latest.titulo}</p>
-                <p class="text-xs text-indigo-200 line-clamp-2">${latest.desc}</p>
+                <p class="text-xs text-indigo-200 line-clamp-2">${latest.descripcion}</p>
             `;
         }
 
-        function renderPublicNovedades() {
-            const novedades = JSON.parse(localStorage.getItem('isfd_novedades')) || [];
+        async function renderPublicNovedades() {
+            const { data: novedades } = await _db.from('novedades').select('*').order('created_at', { ascending: false });
             const avisosContainer = document.getElementById('public-novedades-list');
             const calendarioContainer = document.getElementById('public-calendario-list');
 
+            if (!novedades) return;
             const avisos = novedades.filter(n => n.tipo === 'aviso');
             const fechas = novedades.filter(n => n.tipo === 'fecha');
 
-            avisosContainer.innerHTML = avisos.length === 0 ? `<p class="text-slate-500 text-sm">No hay comunicados generales.</p>` :
+            avisosContainer.innerHTML = avisos.length === 0 ? `<p class="text-slate-500 text-sm">No hay comunicados.</p>` :
                 avisos.map(a => `
                     <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="bg-indigo-50 text-indigo-600 text-xs font-bold px-3 py-1 rounded-full"><i class="fa-solid fa-bullhorn mr-1.5"></i>Comunicado Oficial</span>
-                        </div>
+                        <span class="bg-indigo-50 text-indigo-600 text-xs font-bold px-3 py-1 rounded-full"><i class="fa-solid fa-bullhorn mr-1.5"></i>Comunicado</span>
                         <h4 class="font-bold text-slate-900 text-lg">${a.titulo}</h4>
-                        <p class="text-slate-600 text-sm leading-relaxed">${a.desc}</p>
+                        <p class="text-slate-600 text-sm leading-relaxed">${a.descripcion}</p>
                     </div>
                 `).join('');
 
             calendarioContainer.innerHTML = fechas.length === 0 ? `<p class="text-indigo-200 text-sm">No hay fechas agendadas.</p>` :
                 fechas.map(f => `
                     <div class="bg-indigo-950/60 rounded-2xl p-4 border border-indigo-500/30 space-y-1">
-                        <span class="text-[11px] font-bold text-amber-300 bg-amber-500/20 px-2.5 py-0.5 rounded-full"><i class="fa-regular fa-calendar mr-1"></i>${f.fechaTxt || 'Próximamente'}</span>
+                        <span class="text-[11px] font-bold text-amber-300 bg-amber-500/20 px-2.5 py-0.5 rounded-full"><i class="fa-regular fa-calendar mr-1"></i>${f.fecha_txt || 'Próximamente'}</span>
                         <h4 class="font-bold text-white text-sm mt-1">${f.titulo}</h4>
-                        <p class="text-xs text-indigo-200">${f.desc}</p>
+                        <p class="text-xs text-indigo-200">${f.descripcion}</p>
                     </div>
                 `).join('');
         }
 
-        function renderHomeCareers() {
-            const careers = JSON.parse(localStorage.getItem('isfd_careers'));
-            document.getElementById('home-careers-grid').innerHTML = careers.map(car => `
+        async function renderHomeCareers() {
+            const { data: careers } = await _db.from('carreras').select('*');
+            const grid = document.getElementById('home-careers-grid');
+            if (!careers || careers.length === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center text-slate-500">No hay carreras cargadas en Supabase.</p>`;
+                return;
+            }
+
+            grid.innerHTML = careers.map(car => `
                 <div onclick="switchView('carreras', '${car.id}')" class="bg-white rounded-3xl p-4 sm:p-6 border border-slate-200 hover:border-indigo-300 shadow-sm hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group">
                     <div>
                         <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-4 text-xl group-hover:scale-110 transition-transform">
@@ -718,10 +636,10 @@
             `).join('');
         }
 
-        function renderCareersView(activeId) {
-            const careers = JSON.parse(localStorage.getItem('isfd_careers'));
+        async function renderCareersView(activeId) {
+            const { data: careers } = await _db.from('carreras').select('*');
+            if (!careers || careers.length === 0) return;
             const currentCar = careers.find(c => c.id === activeId) || careers[0];
-            if (!currentCar) return;
             selectedCareerId = currentCar.id;
 
             document.getElementById('careers-tabs').innerHTML = careers.map(car => `
@@ -747,13 +665,11 @@
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             ${materias.map(mat => {
-                                const count = (JSON.parse(localStorage.getItem('isfd_apuntes')) || []).filter(a => a.carrera === currentCar.id && a.anio === yearName && a.materia === mat).length;
                                 return `
                                     <div onclick="switchView('materia', '${currentCar.id}', { anio: '${yearName}', materia: '${mat}' })" class="bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-2xl p-4 sm:p-5 cursor-pointer transition-all flex flex-col justify-between group">
                                         <div>
                                             <div class="flex items-center justify-between mb-2">
                                                 <span class="text-[10px] font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">${yearName}</span>
-                                                <span class="text-xs text-slate-500">${count} apuntes</span>
                                             </div>
                                             <h4 class="font-bold text-slate-900 text-sm sm:text-base">${mat}</h4>
                                         </div>
@@ -779,25 +695,26 @@
             `;
         }
 
-        function renderMateriaView() {
-            const careers = JSON.parse(localStorage.getItem('isfd_careers'));
+        async function renderMateriaView() {
+            const { data: careers } = await _db.from('carreras').select('*');
             const car = careers.find(c => c.id === selectedCareerId);
             document.getElementById('materia-title').innerText = selectedMateria;
             document.getElementById('materia-subtitle').innerText = `${car ? car.name : ''} • ${selectedYear}`;
             document.getElementById('btn-back-to-career').setAttribute('onclick', `switchView('carreras', '${selectedCareerId}')`);
-            filterApuntes();
+            await filterApuntes();
         }
 
-        function filterApuntes() {
+        async function filterApuntes() {
             const query = document.getElementById('search-apuntes').value.toLowerCase();
-            const apuntes = JSON.parse(localStorage.getItem('isfd_apuntes')) || [];
-            const filtered = apuntes.filter(a => a.carrera === selectedCareerId && a.anio === selectedYear && a.materia === selectedMateria && (a.titulo.toLowerCase().includes(query) || a.desc.toLowerCase().includes(query)));
-
+            const { data: apuntes } = await _db.from('apuntes').select('*').eq('carrera', selectedCareerId).eq('anio', selectedYear).eq('materia', selectedMateria);
+            
             const container = document.getElementById('apuntes-list-container');
-            if (filtered.length === 0) {
+            if (!apuntes || apuntes.length === 0) {
                 container.innerHTML = `<div class="col-span-full py-12 text-center bg-white rounded-3xl border border-slate-200 p-8"><p class="text-slate-500 text-sm">No hay apuntes cargados todavía.</p></div>`;
                 return;
             }
+
+            const filtered = apuntes.filter(a => a.titulo.toLowerCase().includes(query) || (a.descripcion && a.descripcion.toLowerCase().includes(query)));
 
             container.innerHTML = filtered.map(ap => `
                 <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 flex flex-col justify-between">
@@ -806,31 +723,24 @@
                             <span class="text-xs font-bold px-3 py-1 rounded-full border ${ap.tipo === 'PDF' ? 'bg-rose-50 text-rose-600 border-rose-200' : 'bg-blue-50 text-blue-600 border-blue-200'}">${ap.tipo}</span>
                         </div>
                         <h4 class="font-bold text-slate-900 text-base sm:text-lg">${ap.titulo}</h4>
-                        <p class="text-slate-600 text-xs mt-2">${ap.desc}</p>
+                        <p class="text-slate-600 text-xs mt-2">${ap.descripcion || ''}</p>
                     </div>
                     <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-                        <span class="text-[11px] text-slate-400">Oficial</span>
-                        <button onclick="downloadApunte(${ap.id})" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-md">Descargar</button>
+                        <span class="text-[11px] text-slate-400">Nube Oficial</span>
+                        <a href="${ap.file_url}" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-md">Descargar</a>
                     </div>
                 </div>
             `).join('');
         }
 
-        function downloadApunte(id) {
-            if (!currentUser) {
-                alert('Debes iniciar sesión para descargar.');
-                openLoginModal();
-                return;
+        async function populateSolicitudCarreras() {
+            const { data: careers } = await _db.from('carreras').select('*');
+            if (careers) {
+                document.getElementById('sol-carrera').innerHTML = careers.map(car => `<option value="${car.id}">${car.name}</option>`).join('');
             }
-            alert('Descarga iniciada.');
         }
 
-        function populateSolicitudCarreras() {
-            const careers = JSON.parse(localStorage.getItem('isfd_careers'));
-            document.getElementById('sol-carrera').innerHTML = careers.map(car => `<option value="${car.id}">${car.name}</option>`).join('');
-        }
-
-        function handleSolicitudSubmit(event) {
+        async function handleSolicitudSubmit(event) {
             event.preventDefault();
             const nombre = document.getElementById('sol-nombre').value;
             const dni = document.getElementById('sol-dni').value;
@@ -838,11 +748,13 @@
             const anio = document.getElementById('sol-anio').value;
             const contacto = document.getElementById('sol-contacto').value;
 
-            const solicitudes = JSON.parse(localStorage.getItem('isfd_solicitudes')) || [];
-            solicitudes.push({ id: Date.now(), nombre, dni, carrera, anio, contacto, estado: 'pendiente' });
-            localStorage.setItem('isfd_solicitudes', JSON.stringify(solicitudes));
+            const { error } = await _db.from('solicitudes').insert([{ nombre, dni, carrera, anio, contacto, estado: 'pendiente' }]);
+            if (error) {
+                alert('Error al enviar la solicitud: ' + error.message);
+                return;
+            }
 
-            alert('¡Solicitud enviada con éxito!');
+            alert('¡Solicitud enviada a la nube con éxito!');
             event.target.reset();
             switchView('home');
         }
@@ -857,19 +769,18 @@
             if (tabName === 'alumnos') renderAdminAlumnos();
         }
 
-        function renderAdminDashboard() {
-            renderAdminSolicitudes();
-            renderAdminNovedades();
-            populateAdminMaterialForm();
-            renderAdminCareers();
-            renderAdminAlumnos();
-            document.getElementById('badge-solicitudes-count').innerText = (JSON.parse(localStorage.getItem('isfd_solicitudes')) || []).length;
+        async function renderAdminDashboard() {
+            await renderAdminSolicitudes();
+            await renderAdminNovedades();
+            await populateAdminMaterialForm();
+            await renderAdminCareers();
+            await renderAdminAlumnos();
         }
 
-        // GESTIÓN ADMIN DE NOVEDADES
-        function renderAdminNovedades() {
-            const novedades = JSON.parse(localStorage.getItem('isfd_novedades')) || [];
+        async function renderAdminNovedades() {
+            const { data: novedades } = await _db.from('novedades').select('*').order('created_at', { ascending: false });
             const container = document.getElementById('admin-novedades-list');
+            if (!novedades) return;
 
             container.innerHTML = novedades.length === 0 ? `<p class="text-slate-500 text-sm">No hay publicaciones.</p>` :
                 novedades.map(n => `
@@ -877,7 +788,7 @@
                         <div>
                             <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${n.tipo === 'aviso' ? 'bg-indigo-100 text-indigo-700' : 'bg-amber-100 text-amber-700'}">${n.tipo}</span>
                             <h4 class="font-bold text-slate-900 text-sm mt-1">${n.titulo}</h4>
-                            <p class="text-xs text-slate-500 line-clamp-1">${n.desc}</p>
+                            <p class="text-xs text-slate-500 line-clamp-1">${n.descripcion}</p>
                         </div>
                         <button onclick="deleteNovedad(${n.id})" class="text-rose-600 text-xs font-semibold px-3 py-1.5 rounded-lg bg-white border border-slate-200"><i class="fa-solid fa-trash"></i></button>
                     </div>
@@ -891,41 +802,45 @@
             else divFecha.classList.add('hidden');
         });
 
-        function handleSaveNovedad(event) {
+        async function handleSaveNovedad(event) {
             event.preventDefault();
             const tipo = document.getElementById('nov-tipo').value;
             const titulo = document.getElementById('nov-titulo').value;
-            const fechaTxt = document.getElementById('nov-fecha-txt').value;
-            const desc = document.getElementById('nov-desc').value;
+            const fecha_txt = document.getElementById('nov-fecha-txt').value;
+            const descripcion = document.getElementById('nov-desc').value;
 
-            let novedades = JSON.parse(localStorage.getItem('isfd_novedades')) || [];
-            novedades.unshift({ id: Date.now(), tipo, titulo, fechaTxt, desc, fecha: new Date().toISOString() });
-            localStorage.setItem('isfd_novedades', JSON.stringify(novedades));
+            const { error } = await _db.from('novedades').insert([{ tipo, titulo, fecha_txt, descripcion }]);
+            if (error) {
+                alert('Error: ' + error.message);
+                return;
+            }
 
-            alert('¡Publicado con éxito!');
+            alert('¡Publicado en la nube!');
             event.target.reset();
             document.getElementById('div-nov-fecha').classList.add('hidden');
-            renderAdminNovedades();
+            await renderAdminNovedades();
         }
 
-        function deleteNovedad(id) {
+        async function deleteNovedad(id) {
             if (!confirm('¿Eliminar publicación?')) return;
-            let novedades = (JSON.parse(localStorage.getItem('isfd_novedades')) || []).filter(n => n.id !== id);
-            localStorage.setItem('isfd_novedades', JSON.stringify(novedades));
-            renderAdminNovedades();
+            await _db.from('novedades').delete().eq('id', id);
+            await renderAdminNovedades();
         }
 
-        function renderAdminSolicitudes() {
-            const solicitudes = (JSON.parse(localStorage.getItem('isfd_solicitudes')) || []).filter(s => s.estado === 'pendiente');
+        async function renderAdminSolicitudes() {
+            const { data: solicitudes } = await _db.from('solicitudes').select('*').eq('estado', 'pendiente');
             const container = document.getElementById('admin-solicitudes-list');
-            document.getElementById('badge-solicitudes-count').innerText = solicitudes.length;
+            const badge = document.getElementById('badge-solicitudes-count');
+            if (!solicitudes) return;
+
+            badge.innerText = solicitudes.length;
 
             if (solicitudes.length === 0) {
                 container.innerHTML = `<p class="text-slate-500 text-sm py-4 text-center">No hay solicitudes pendientes.</p>`;
                 return;
             }
 
-            const careers = JSON.parse(localStorage.getItem('isfd_careers'));
+            const { data: careers } = await _db.from('carreras').select('*');
             container.innerHTML = solicitudes.map(s => {
                 const car = careers.find(c => c.id === s.carrera);
                 const sugUser = s.nombre.toLowerCase().split(' ')[0] + Math.floor(Math.random() * 900 + 100);
@@ -942,28 +857,33 @@
             }).join('');
         }
 
-        function aprobarSolicitud(id, username, pass, nombre, dni, carrera, anio, contacto) {
-            const alumnos = JSON.parse(localStorage.getItem('isfd_alumnos')) || [];
-            alumnos.push({ id: Date.now(), nombre, dni, carrera, anio, usuario: username, pass, contacto });
-            localStorage.setItem('isfd_alumnos', JSON.stringify(alumnos));
+        async function aprobarSolicitud(id, username, pass, nombre, dni, carrera, anio, contacto) {
+            const { error: errAlumno } = await _db.from('alumnos').insert([{ nombre, dni, carrera, anio, usuario: username, pass, contacto }]);
+            if (errAlumno) {
+                alert('Error al crear alumno: ' + errAlumno.message);
+                return;
+            }
 
-            let solicitudes = (JSON.parse(localStorage.getItem('isfd_solicitudes')) || []).filter(s => s.id !== id);
-            localStorage.setItem('isfd_solicitudes', JSON.stringify(solicitudes));
+            await _db.from('solicitudes').delete().eq('id', id);
 
-            alert(`¡Aprobado!\nUsuario: ${username}\nPass: ${pass}`);
-            renderAdminDashboard();
+            alert(`¡Aprobado con éxito!\nUsuario: ${username}\nPass: ${pass}`);
+            await renderAdminDashboard();
         }
 
-        function populateAdminMaterialForm() {
-            const careers = JSON.parse(localStorage.getItem('isfd_careers'));
-            document.getElementById('up-carrera').innerHTML = careers.map(car => `<option value="${car.id}">${car.name}</option>`).join('');
-            updateAdminMateriasSelect();
+        async function populateAdminMaterialForm() {
+            const { data: careers } = await _db.from('carreras').select('*');
+            if (careers) {
+                document.getElementById('up-carrera').innerHTML = careers.map(car => `<option value="${car.id}">${car.name}</option>`).join('');
+                updateAdminMateriasSelect();
+            }
         }
 
-        function updateAdminMateriasSelect() {
+        async function updateAdminMateriasSelect() {
             const carId = document.getElementById('up-carrera').value;
             const anio = document.getElementById('up-anio').value;
-            const car = JSON.parse(localStorage.getItem('isfd_careers')).find(c => c.id === carId);
+            const { data: careers } = await _db.from('carreras').select('*');
+            if (!careers) return;
+            const car = careers.find(c => c.id === carId);
             const matSelect = document.getElementById('up-materia');
             if (car && car.materias && car.materias[anio]) {
                 matSelect.innerHTML = car.materias[anio].map(m => `<option value="${m}">${m}</option>`).join('');
@@ -972,27 +892,53 @@
             }
         }
 
-        function handleUploadMaterial(event) {
+        async function handleUploadMaterial(event) {
             event.preventDefault();
             const carrera = document.getElementById('up-carrera').value;
             const anio = document.getElementById('up-anio').value;
             const materia = document.getElementById('up-materia').value;
             const tipo = document.getElementById('up-tipo').value;
             const titulo = document.getElementById('up-titulo').value;
-            const desc = document.getElementById('up-desc').value;
+            const descripcion = document.getElementById('up-desc').value;
+            const fileInput = document.getElementById('up-file');
 
-            const apuntes = JSON.parse(localStorage.getItem('isfd_apuntes')) || [];
-            apuntes.push({ id: Date.now(), carrera, anio, materia, tipo, titulo, desc, url: '#' });
-            localStorage.setItem('isfd_apuntes', JSON.stringify(apuntes));
+            if (fileInput.files.length === 0) {
+                alert('Seleccioná un archivo.');
+                return;
+            }
 
-            alert('¡Material publicado!');
+            const file = fileInput.files[0];
+            const fileName = `${Date.now()}_${file.name}`;
+
+            // Subir archivo a Supabase Storage (Bucket: materiales)
+            const { data: uploadData, error: uploadError } = await _db.storage.from('materiales').upload(fileName, file);
+            if (uploadError) {
+                alert('Error al subir archivo al Storage: ' + uploadError.message);
+                return;
+            }
+
+            // Obtener URL pública
+            const { data: urlData } = _db.storage.from('materiales').getPublicUrl(fileName);
+            const file_url = urlData.publicUrl;
+
+            // Guardar registro en la tabla apuntes
+            const { error: dbError } = await _db.from('apuntes').insert([{ carrera, anio, materia, tipo, titulo, descripcion, file_url }]);
+            if (dbError) {
+                alert('Error al guardar apunte en base de datos: ' + dbError.message);
+                return;
+            }
+
+            alert('¡Material subido y publicado con éxito!');
             event.target.reset();
-            populateAdminMaterialForm();
+            await populateAdminMaterialForm();
         }
 
-        function renderAdminCareers() {
-            const careers = JSON.parse(localStorage.getItem('isfd_careers'));
-            document.getElementById('admin-careers-list').innerHTML = careers.map(car => `
+        async function renderAdminCareers() {
+            const { data: careers } = await _db.from('carreras').select('*');
+            const list = document.getElementById('admin-careers-list');
+            if (!careers) return;
+
+            list.innerHTML = careers.map(car => `
                 <div class="bg-slate-50 rounded-2xl border border-slate-200 p-4 flex justify-between items-center">
                     <div>
                         <h4 class="font-bold text-slate-900 text-sm">${car.name}</h4>
@@ -1003,7 +949,7 @@
             `).join('');
         }
 
-        function handleSaveCareer(event) {
+        async function handleSaveCareer(event) {
             event.preventDefault();
             const name = document.getElementById('car-nombre').value;
             const type = document.getElementById('car-tipo').value;
@@ -1012,35 +958,40 @@
             const description = document.getElementById('car-desc').value;
             const matsInitText = document.getElementById('car-materias-init').value;
 
-            let careers = JSON.parse(localStorage.getItem('isfd_careers')) || [];
             let materiasObj = {};
             const matsList = matsInitText ? matsInitText.split(',').map(m => m.trim()).filter(Boolean) : ['Introducción'];
             for (let i = 1; i <= duration; i++) {
                 materiasObj[`${i}° Año`] = i === 1 ? matsList : [`Materia ${i}.1`];
             }
 
-            const newId = name.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 15) + '_' + Date.now().toString().slice(-4);
-            careers.push({ id: newId, name, type, duration, title, description, color: 'indigo', materias: materiasObj });
-            localStorage.setItem('isfd_careers', JSON.stringify(careers));
+            const id = name.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 15) + '_' + Date.now().toString().slice(-4);
+            
+            const { error } = await _db.from('carreras').insert([{ id, name, type, duration, title, description, color: 'indigo', materias: materiasObj }]);
+            if (error) {
+                alert('Error al guardar carrera: ' + error.message);
+                return;
+            }
 
-            alert('¡Carrera creada!');
+            alert('¡Carrera creada en la nube!');
             event.target.reset();
-            renderAdminCareers();
-            populateAdminMaterialForm();
+            await renderAdminCareers();
+            await populateAdminMaterialForm();
         }
 
-        function deleteCareer(id) {
+        async function deleteCareer(id) {
             if (!confirm('¿Eliminar carrera?')) return;
-            let careers = (JSON.parse(localStorage.getItem('isfd_careers')) || []).filter(c => c.id !== id);
-            localStorage.setItem('isfd_careers', JSON.stringify(careers));
-            renderAdminCareers();
+            await _db.from('carreras').delete().eq('id', id);
+            await renderAdminCareers();
         }
 
-        function renderAdminAlumnos() {
-            const alumnos = JSON.parse(localStorage.getItem('isfd_alumnos')) || [];
-            const careers = JSON.parse(localStorage.getItem('isfd_careers'));
-            document.getElementById('admin-alumnos-tbody').innerHTML = alumnos.map(al => {
-                const car = careers.find(c => c.id === al.carrera);
+        async function renderAdminAlumnos() {
+            const { data: alumnos } = await _db.from('alumnos').select('*');
+            const { data: careers } = await _db.from('carreras').select('*');
+            const tbody = document.getElementById('admin-alumnos-tbody');
+            if (!alumnos) return;
+
+            tbody.innerHTML = alumnos.map(al => {
+                const car = careers ? careers.find(c => c.id === al.carrera) : null;
                 return `
                     <tr class="border-b border-slate-100">
                         <td class="p-3 font-bold">${al.nombre}</td>
@@ -1053,11 +1004,10 @@
             }).join('');
         }
 
-        function deleteAlumno(id) {
+        async function deleteAlumno(id) {
             if (!confirm('¿Eliminar alumno?')) return;
-            let alumnos = (JSON.parse(localStorage.getItem('isfd_alumnos')) || []).filter(a => a.id !== id);
-            localStorage.setItem('isfd_alumnos', JSON.stringify(alumnos));
-            renderAdminAlumnos();
+            await _db.from('alumnos').delete().eq('id', id);
+            await renderAdminAlumnos();
         }
 
         function handleSaveIdentity(event) {
@@ -1072,7 +1022,7 @@
         function openLoginModal() { document.getElementById('login-modal').classList.remove('hidden'); }
         function closeLoginModal() { document.getElementById('login-modal').classList.add('hidden'); }
 
-        function handleLoginSubmit(event) {
+        async function handleLoginSubmit(event) {
             event.preventDefault();
             const u = document.getElementById('login-user').value.trim();
             const p = document.getElementById('login-pass').value.trim();
@@ -1086,9 +1036,9 @@
                 return;
             }
 
-            const alumnos = JSON.parse(localStorage.getItem('isfd_alumnos')) || [];
-            const found = alumnos.find(al => al.usuario === u && al.pass === p);
-            if (found) {
+            const { data: alumnos } = await _db.from('alumnos').select('*').eq('usuario', u).eq('pass', p);
+            if (alumnos && alumnos.length > 0) {
+                const found = alumnos[0];
                 currentUser = { role: 'alumno', username: found.usuario, name: found.nombre };
                 localStorage.setItem('isfd_current_user', JSON.stringify(currentUser));
                 closeLoginModal();
@@ -1097,7 +1047,7 @@
                 alert(`¡Bienvenido/a, ${found.nombre}!`);
                 return;
             }
-            alert('Credenciales incorrectas.');
+            alert('Credenciales incorrectas o usuario no encontrado en la nube.');
         }
 
         function logout() {
@@ -1107,9 +1057,9 @@
             switchView('home');
         }
 
-        window.onload = function() {
+        window.onload = async function() {
             loadIdentity();
-            switchView('home');
+            await switchView('home');
         };
     </script>
 </body>
