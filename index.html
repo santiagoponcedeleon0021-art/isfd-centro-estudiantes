@@ -1,0 +1,2448 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Digital | Centro de Estudiantes ISFD</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        isfd: {
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            700: '#1d4ed8',
+                            600: '#2563eb',
+                            500: '#3b82f6',
+                            100: '#dbeafe',
+                            50: '#eff6ff',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos personalizados mínimos para animaciones y scrollbar */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        h1, h2, h3, .font-display {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .fade-in {
+            animation: fadeIn 0.28s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Ocultar scrollbar en pestañas horizontales en móvil */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- CONTENEDOR DE NOTIFICACIONES TOAST -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
+    <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-lg border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 sm:h-20">
+                <!-- Logo e Identidad Institucional -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('carreras')">
+                    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
+                        <i data-lucide="book-open-check" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <span class="font-display font-bold text-base sm:text-lg tracking-tight block leading-none text-white">
+                            Centro de Estudiantes
+                        </span>
+                        <span class="text-xs text-blue-300 font-medium tracking-wide">
+                            ISFD · Banco de Apuntes Digital
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Navegación y Estado de Sesión -->
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <button onclick="navigateTo('carreras')" id="nav-btn-carreras" class="hidden md:flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium bg-slate-800 text-white hover:bg-slate-700 transition">
+                        <i data-lucide="graduation-cap" class="w-4 h-4 text-blue-400"></i>
+                        Carreras y Apuntes
+                    </button>
+
+                    <!-- Botón Panel Admin (solo visible si role === 'admin') -->
+                    <button onclick="navigateTo('admin')" id="nav-btn-admin" class="hidden items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium bg-amber-500/15 text-amber-300 border border-amber-500/30 hover:bg-amber-500/25 transition relative">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Panel Admin</span>
+                        <span id="admin-pending-badge" class="hidden bg-amber-500 text-slate-950 text-[11px] font-bold px-1.5 py-0.5 rounded-full">0</span>
+                    </button>
+
+                    <!-- Estado: No Logueado -->
+                    <div id="auth-guest-controls" class="flex items-center gap-2">
+                        <button onclick="openAuthModal('request')" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i>
+                            Solicitar Acceso
+                        </button>
+                        <button onclick="openAuthModal('login')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-600/25 transition">
+                            <i data-lucide="log-in" class="w-4 h-4"></i>
+                            <span>Ingresar</span>
+                        </button>
+                    </div>
+
+                    <!-- Estado: Logueado -->
+                    <div id="auth-user-controls" class="hidden items-center gap-2 sm:gap-3">
+                        <div class="flex items-center gap-2.5 bg-slate-800/90 border border-slate-700 px-3 py-1.5 rounded-xl">
+                            <div id="user-avatar-badge" class="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-xs font-bold uppercase">
+                                AL
+                            </div>
+                            <div class="hidden sm:block text-left leading-tight">
+                                <p id="user-display-name" class="text-xs font-semibold text-white truncate max-w-[130px]">Alumno</p>
+                                <p id="user-display-role" class="text-[10px] text-blue-300 uppercase tracking-wider font-medium">Estudiante</p>
+                            </div>
+                        </div>
+                        <button onclick="logout()" title="Cerrar sesión" class="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition">
+                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- BANNER INFORMATIVO DE ACCESO (SI NO ESTÁ LOGUEADO) -->
+    <div id="guest-banner" class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white border-b border-blue-800/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
+            <div class="flex items-center gap-2.5 text-center sm:text-left">
+                <span class="bg-blue-500/20 text-blue-300 p-1.5 rounded-lg shrink-0">
+                    <i data-lucide="info" class="w-4 h-4"></i>
+                </span>
+                <p class="text-slate-200">
+                    <strong class="text-white">Acceso Estudiantes ISFD:</strong> Podés explorar todas las carreras y materias libremente. Para <span class="underline decoration-amber-400 font-medium">descargar apuntes en PDF o DOCX</span> ingresá con tu usuario o solicitá el alta al Centro de Estudiantes.
+                </p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+                <button onclick="openAuthModal('request')" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold text-xs transition shadow-sm">
+                    Solicitar Usuario
+                </button>
+                <button onclick="openAuthModal('login')" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium text-xs transition">
+                    Ya tengo cuenta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+
+        <!-- ========================================================= -->
+        <!-- VISTA 1: PORTAL DE CARRERAS, AÑOS Y BANCO DE APUNTES      -->
+        <!-- ========================================================= -->
+        <section id="view-carreras" class="space-y-8 fade-in">
+            
+            <!-- Encabezado de Bienvenida -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold mb-2 border border-blue-100">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        Ciclo Lectivo 2026 · Material Gratuito y Digitalizado
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
+                        Oferta Académica y Banco de Apuntes
+                    </h1>
+                    <p class="text-slate-600 mt-1.5 text-sm sm:text-base max-w-2xl">
+                        Seleccioná tu carrera para visualizar su estructura curricular, desplegar los años de cursada y acceder a los módulos, bibliografía y guías por materia.
+                    </p>
+                </div>
+
+                <!-- Buscador Global Rápido -->
+                <div class="w-full md:w-80">
+                    <label for="global-search" class="sr-only">Buscar apunte o materia</label>
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="global-search" oninput="handleGlobalSearch(this.value)" placeholder="Buscar apunte, autor o materia..." class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultados de Búsqueda Global (si el usuario escribe en el buscador) -->
+            <div id="global-search-results" class="hidden space-y-4 fade-in">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i data-lucide="file-search" class="w-5 h-5 text-blue-600"></i>
+                        Resultados de búsqueda (<span id="search-count">0</span>)
+                    </h2>
+                    <button onclick="clearGlobalSearch()" class="text-xs font-semibold text-blue-600 hover:underline">Limpiar búsqueda</button>
+                </div>
+                <div id="search-results-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+
+            <!-- SECCIÓN DE CARRERAS CON DIFERENCIACIÓN VISUAL CLARA -->
+            <div id="carreras-section" class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <span class="w-2 h-6 bg-blue-600 rounded-full inline-block"></span>
+                        1. Elegí tu Carrera
+                    </h2>
+                    <span id="carreras-total-badge" class="text-xs font-medium text-slate-500 hidden sm:inline">4 propuestas formativas disponibles</span>
+                </div>
+
+                <!-- Grid de Tarjetas de Carreras -->
+                <div id="carreras-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Se renderiza dinámicamente vía JS -->
+                </div>
+            </div>
+
+            <!-- DESPLIEGUE DINÁMICO DE AÑOS DE LA CARRERA SELECCIONADA -->
+            <div id="carrera-detail-container" class="hidden scroll-mt-24 fade-in">
+                <div id="carrera-banner-box" class="rounded-2xl p-5 sm:p-7 border shadow-sm transition-all">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-black/10">
+                        <div class="flex items-start gap-4">
+                            <div id="selected-carrera-icon" class="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-md shrink-0">
+                                <!-- Icono -->
+                            </div>
+                            <div>
+                                <div class="flex flex-wrap items-center gap-2 mb-1">
+                                    <span id="selected-carrera-badge" class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md">
+                                        Profesorado
+                                    </span>
+                                    <span id="selected-carrera-duration" class="text-xs font-medium text-slate-600 flex items-center gap-1">
+                                        <i data-lucide="clock" class="w-3.5 h-3.5"></i> 4 Años
+                                    </span>
+                                </div>
+                                <h2 id="selected-carrera-title" class="text-xl sm:text-2xl font-extrabold text-slate-900">
+                                    Nombre de la Carrera
+                                </h2>
+                                <p id="selected-carrera-desc" class="text-sm text-slate-700 mt-1">
+                                    Descripción y perfil del egresado.
+                                </p>
+                            </div>
+                        </div>
+
+                        <button onclick="closeCarreraDetail()" class="self-start lg:self-center inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/80 hover:bg-white text-slate-700 text-xs font-semibold border border-slate-200 shadow-sm transition">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                            Cerrar carrera
+                        </button>
+                    </div>
+
+                    <!-- SELECTOR DE AÑOS DE LA CARRERA -->
+                    <div class="pt-5">
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-600 mb-3 flex items-center gap-1.5">
+                            <i data-lucide="layers" class="w-4 h-4"></i>
+                            2. Seleccioná el Año de Cursada para ver las Materias y Apuntes:
+                        </p>
+                        <div id="years-tabs-container" class="flex flex-wrap gap-2.5">
+                            <!-- Botones de 1° Año, 2° Año, etc. -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BANCO DE APUNTES POR MATERIA (DEL AÑO SELECCIONADO) -->
+                <div id="materias-apuntes-section" class="mt-6 space-y-6 hidden fade-in">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <div>
+                            <h3 id="selected-year-heading" class="text-lg font-bold text-slate-900">
+                                Materias y Apuntes · 1° Año
+                            </h3>
+                            <p class="text-xs text-slate-500">Hacé clic en descargar o previsualizar sobre cualquier documento PDF o DOCX.</p>
+                        </div>
+
+                        <!-- Filtro por tipo de formato -->
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-medium text-slate-500">Formato:</span>
+                            <select id="format-filter" onchange="renderMateriasAndMaterials()" class="text-xs font-semibold bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="ALL">Todos (PDF y DOCX)</option>
+                                <option value="PDF">Solo PDF (.pdf)</option>
+                                <option value="DOCX">Solo Word (.docx)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Contenedor de Materias con sus respectivos Apuntes -->
+                    <div id="materias-list-container" class="space-y-6">
+                        <!-- Se renderizan las tarjetas de cada materia y sus archivos -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VISTA 2: PANEL DE ADMINISTRACIÓN (SOLO ADMINS)            -->
+        <!-- ========================================================= -->
+        <section id="view-admin" class="hidden space-y-8 fade-in">
+            <!-- Cabecera Admin -->
+            <div class="bg-slate-900 text-white rounded-2xl p-6 sm:p-8 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-semibold mb-2 border border-amber-500/30">
+                        <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+                        Gestión Centro de Estudiantes
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Panel de Administración ISFD</h1>
+                    <p class="text-slate-300 text-sm mt-1">Aprobá solicitudes de alumnos, generá credenciales y cargá nuevo material de estudio al repositorio.</p>
+                </div>
+                <button onclick="navigateTo('carreras')" class="self-start md:self-center inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium border border-slate-700 transition">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    Volver a Carreras
+                </button>
+            </div>
+
+            <!-- Tarjetas de Métricas Rápidas -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                        <i data-lucide="user-clock" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">Solicitudes Pendientes</p>
+                        <p id="stat-pending-count" class="text-2xl font-extrabold text-slate-900">0</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">Estudiantes Activos</p>
+                        <p id="stat-users-count" class="text-2xl font-extrabold text-slate-900">0</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                        <i data-lucide="file-text" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">Apuntes Publicados</p>
+                        <p id="stat-materials-count" class="text-2xl font-extrabold text-slate-900">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestañas Internas del Panel Admin -->
+            <div class="flex border-b border-slate-200 gap-2 overflow-x-auto no-scrollbar">
+                <button onclick="switchAdminTab('solicitudes')" id="admin-tab-solicitudes" class="px-5 py-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap flex items-center gap-2">
+                    <i data-lucide="inbox" class="w-4 h-4"></i>
+                    Solicitudes de Acceso
+                </button>
+                <button onclick="switchAdminTab('subir')" id="admin-tab-subir" class="px-5 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap flex items-center gap-2">
+                    <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                    Cargar Material (PDF / DOCX)
+                </button>
+                <button onclick="switchAdminTab('carreras-admin')" id="admin-tab-carreras-admin" class="px-5 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap flex items-center gap-2">
+                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                    Gestión de Carreras
+                </button>
+                <button onclick="switchAdminTab('usuarios')" id="admin-tab-usuarios" class="px-5 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap flex items-center gap-2">
+                    <i data-lucide="user-check" class="w-4 h-4"></i>
+                    Alumnos Habilitados y Alta Manual
+                </button>
+            </div>
+
+            <!-- SUB-SECCIÓN ADMIN A: SOLICITUDES PENDIENTES -->
+            <div id="admin-panel-solicitudes" class="space-y-4 fade-in">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-bold text-slate-900">Bandeja de Solicitudes de Estudiantes</h2>
+                    <span class="text-xs text-slate-500">Revisá el DNI y asigná usuario/contraseña para habilitar el ingreso.</span>
+                </div>
+                <div id="pending-requests-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Tarjetas de solicitudes pendientes -->
+                </div>
+            </div>
+
+            <!-- SUB-SECCIÓN ADMIN B: CARGAR NUEVO MATERIAL -->
+            <div id="admin-panel-subir" class="hidden fade-in">
+                <div class="max-w-3xl bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
+                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+                        <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center">
+                            <i data-lucide="file-plus-2" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">Publicar Nuevo Apunte o Bibliografía</h2>
+                            <p class="text-xs text-slate-500">El archivo quedará disponible inmediatamente en la carrera, año y materia seleccionados.</p>
+                        </div>
+                    </div>
+
+                    <form id="upload-material-form" onsubmit="handleUploadMaterial(event)" class="space-y-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Carrera -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">1. Carrera *</label>
+                                <select id="mat-carrera" onchange="updateFormYears()" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                    <!-- Opciones cargadas por JS -->
+                                </select>
+                            </div>
+
+                            <!-- Año -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">2. Año de Cursada *</label>
+                                <select id="mat-year" onchange="updateFormSubjects()" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                    <!-- Opciones cargadas por JS -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Materia -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">3. Materia / Espacio Curricular *</label>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <select id="mat-subject" required class="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                    <!-- Materias del año -->
+                                </select>
+                                <input type="text" id="mat-custom-subject" placeholder="O escribí una materia nueva..." class="sm:w-64 px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1">Podés elegir una materia existente o escribir una nueva en el campo derecho.</p>
+                        </div>
+
+                        <!-- Título del apunte -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">4. Título del Apunte o Módulo *</label>
+                            <input type="text" id="mat-title" required placeholder="Ej: Unidad 2 - Didáctica de la Matemática y Resolución de Problemas" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+
+                        <!-- Descripción breve -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">5. Descripción Breve / Autor *</label>
+                            <textarea id="mat-desc" rows="2" required placeholder="Ej: Compilado de textos obligatorios de Alicia Camilloni + Guía de trabajos prácticos." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Tipo de Archivo -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">6. Formato del Documento *</label>
+                                <select id="mat-format" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                    <option value="PDF">Documento PDF (.pdf)</option>
+                                    <option value="DOCX">Documento Word (.docx)</option>
+                                </select>
+                            </div>
+
+                            <!-- Archivo / Enlace simulado -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">7. Seleccionar Archivo o Enlace</label>
+                                <input type="file" id="mat-file-input" accept=".pdf,.doc,.docx" onchange="handleFileSelect(this)" class="block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-slate-300 rounded-xl bg-slate-50 p-1">
+                                <p id="mat-file-feedback" class="text-[11px] text-slate-500 mt-1">Si no adjuntás un archivo local, se generará un enlace institucional de descarga.</p>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 flex justify-end">
+                            <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-600/20 transition">
+                                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                                Publicar Material en el Banco
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- SUB-SECCIÓN ADMIN D: GESTIÓN DE CARRERAS (CREAR / EDITAR / ELIMINAR) -->
+            <div id="admin-panel-carreras-admin" class="hidden space-y-6 fade-in">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Formulario para Crear o Editar Carrera -->
+                    <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-7">
+                        <div class="flex items-center justify-between gap-3 mb-5 pb-4 border-b border-slate-100">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0">
+                                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h2 id="carrera-form-heading" class="text-lg font-bold text-slate-900">Agregar Nueva Carrera al ISFD</h2>
+                                    <p class="text-xs text-slate-500">Se habilitará automáticamente en toda la plataforma y formularios.</p>
+                                </div>
+                            </div>
+                            <button type="button" id="cancel-edit-carrera-btn" onclick="resetCarreraForm()" class="hidden px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700">
+                                Cancelar edición
+                            </button>
+                        </div>
+
+                        <form id="manage-carrera-form" onsubmit="handleSaveCarrera(event)" class="space-y-4">
+                            <input type="hidden" id="edit-carrera-id" value="">
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nombre Completo de la Carrera *</label>
+                                <input type="text" id="car-nombre" required placeholder="Ej: Profesorado de Educación Secundaria en Lengua y Literatura" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tipo / Nivel Formativo *</label>
+                                    <select id="car-tipo" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                        <option value="Formación Docente · Nivel Secundario">Formación Docente · Nivel Secundario</option>
+                                        <option value="Formación Docente · Nivel Primario">Formación Docente · Nivel Primario</option>
+                                        <option value="Formación Docente · Primera Infancia">Formación Docente · Primera Infancia</option>
+                                        <option value="Formación Docente · Niveles Obligatorios">Formación Docente · Niveles Obligatorios</option>
+                                        <option value="Formación Técnica Superior">Formación Técnica Superior</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Duración en Años *</label>
+                                    <select id="car-duracion" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                        <option value="2">2 Años (1° y 2° Año)</option>
+                                        <option value="3">3 Años (1° a 3° Año)</option>
+                                        <option value="4" selected>4 Años (1° a 4° Año)</option>
+                                        <option value="5">5 Años (1° a 5° Año)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Título que Otorga *</label>
+                                    <input type="text" id="car-titulo" required placeholder="Ej: Profesor/a en Lengua y Literatura" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Modalidad de Cursada *</label>
+                                    <select id="car-modalidad" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                        <option value="Presencial">Presencial</option>
+                                        <option value="Semipresencial / Combinada">Semipresencial / Combinada</option>
+                                        <option value="Turno Vespertino / Nocturno">Presencial · Turno Vespertino</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Enfoque / Perfil Diferencial *</label>
+                                <input type="text" id="car-orientacion" required placeholder="Ej: Lingüística, Teoría Literaria, Análisis del Discurso y Didáctica" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Descripción Breve de la Carrera *</label>
+                                <textarea id="car-descripcion" rows="2" required placeholder="Explicá brevemente qué diferencia a esta carrera y su campo laboral..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Materias Iniciales de 1° Año (opcional, separadas por coma)</label>
+                                <input type="text" id="car-materias-iniciales" placeholder="Ej: Pedagogía, Didáctica General, Introducción a los Estudios Literarios" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <p class="text-[11px] text-slate-500 mt-1">Luego podrás seguir agregando materias en cualquier año al cargar apuntes.</p>
+                            </div>
+
+                            <!-- Personalización Visual: Color e Ícono -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Color de Identidad Visual *</label>
+                                    <select id="car-color" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                        <option value="indigo">🔵 Azul / Índigo Institucional</option>
+                                        <option value="emerald">🟢 Verde Esmeralda</option>
+                                        <option value="violet">🟣 Violeta Académico</option>
+                                        <option value="amber">🟡 Ámbar / Dorado</option>
+                                        <option value="rose">🔴 Rosa / Carmesí</option>
+                                        <option value="cyan">🩵 Cian / Tecnológico</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Ícono Representativo *</label>
+                                    <select id="car-icon" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                        <option value="book-open">📖 Educación / Pedagogía</option>
+                                        <option value="feather">✒️ Literatura / Letras</option>
+                                        <option value="sigma">∑ Matemática / Exactas</option>
+                                        <option value="code-2">💻 Software / Informática</option>
+                                        <option value="landmark">🏛️ Historia / Ciencias Sociales</option>
+                                        <option value="microscope">🔬 Biología / Ciencias Naturales</option>
+                                        <option value="palette">🎨 Artes / Expresión</option>
+                                        <option value="languages">🌐 Inglés / Idiomas</option>
+                                        <option value="shapes">🧩 Nivel Inicial / Infancias</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="pt-3 flex justify-end">
+                                <button type="submit" id="save-carrera-submit-btn" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md shadow-indigo-600/20 transition">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                                    Guardar y Publicar Carrera
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Listado de Carreras Activas en el Sistema -->
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                            <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+                                <i data-lucide="layers" class="w-4 h-4 text-indigo-600"></i>
+                                Carreras Publicadas (<span id="admin-carreras-count">0</span>)
+                            </h3>
+                            <p class="text-xs text-slate-500 mb-4">Podés editar los datos de una carrera o eliminarla del catálogo.</p>
+
+                            <div id="admin-carreras-list" class="space-y-3">
+                                <!-- Se renderiza dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-SECCIÓN ADMIN C: USUARIOS ACTIVOS Y ALTA MANUAL -->
+            <div id="admin-panel-usuarios" class="hidden space-y-6 fade-in">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Formulario de Alta Manual -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm h-fit">
+                        <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+                            <i data-lucide="user-plus" class="w-4 h-4 text-blue-600"></i>
+                            Alta Manual de Estudiante
+                        </h3>
+                        <p class="text-xs text-slate-500 mb-4">Creá directamente un usuario y contraseña para un alumno.</p>
+
+                        <form onsubmit="handleManualCreateUser(event)" class="space-y-3.5">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre Completo *</label>
+                                <input type="text" id="manual-name" required placeholder="Ej: Sofía Fernández" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">DNI *</label>
+                                <input type="text" id="manual-dni" required placeholder="Ej: 42150890" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Carrera *</label>
+                                <select id="manual-carrera" required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm"></select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Usuario *</label>
+                                    <input type="text" id="manual-username" required placeholder="sfernandez" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Contraseña *</label>
+                                    <input type="text" id="manual-password" required placeholder="isfd2026" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm transition">
+                                Crear y Habilitar Cuenta
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Tabla/Lista de Usuarios Habilitados -->
+                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                            <i data-lucide="users" class="w-4 h-4 text-emerald-600"></i>
+                            Cuentas Registradas en el Sistema
+                        </h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-200 text-[11px] font-bold uppercase text-slate-500">
+                                        <th class="py-2.5 px-3">Estudiante / Rol</th>
+                                        <th class="py-2.5 px-3">Usuario</th>
+                                        <th class="py-2.5 px-3">Contraseña</th>
+                                        <th class="py-2.5 px-3">Carrera / DNI</th>
+                                        <th class="py-2.5 px-3 text-right">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="active-users-tbody" class="divide-y divide-slate-100 text-sm">
+                                    <!-- Filas cargadas por JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- MODAL DE INICIO DE SESIÓN Y SOLICITUD DE USUARIO          -->
+    <!-- ========================================================= -->
+    <div id="auth-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/70 backdrop-blur-sm p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden fade-in my-auto">
+            <!-- Header Modal -->
+            <div class="bg-slate-900 px-6 py-5 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center">
+                        <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base leading-tight">Portal Estudiantes ISFD</h3>
+                        <p class="text-xs text-slate-400">Centro de Estudiantes</p>
+                    </div>
+                </div>
+                <button onclick="closeAuthModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Selector de Pestañas Modal: Ingresar vs Solicitar Cuenta -->
+            <div class="grid grid-cols-2 bg-slate-100 p-1.5 mx-6 mt-5 rounded-xl">
+                <button id="modal-tab-login" onclick="switchModalTab('login')" class="py-2 text-xs font-bold rounded-lg bg-white text-slate-900 shadow-sm transition">
+                    Iniciar Sesión
+                </button>
+                <button id="modal-tab-request" onclick="switchModalTab('request')" class="py-2 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition">
+                    Solicitar Usuario
+                </button>
+            </div>
+
+            <!-- FORMULARIO 1: INICIAR SESIÓN -->
+            <form id="login-form" onsubmit="handleLogin(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Usuario</label>
+                    <div class="relative">
+                        <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="login-username" required placeholder="Ingresá tu usuario" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Contraseña</label>
+                    <div class="relative">
+                        <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                        <input type="password" id="login-password" required placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div id="login-error-msg" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium"></div>
+
+                <button type="submit" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-600/20 transition">
+                    Ingresar a la Biblioteca
+                </button>
+
+                <!-- Credenciales Demo Rápidas para Pruebas -->
+                <div class="pt-3 border-t border-slate-100">
+                    <p class="text-[11px] font-semibold text-slate-500 uppercase text-center mb-2">Accesos rápidos de demostración:</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="fillDemoCredentials('alumno', 'alumno123')" class="p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition">
+                            <span class="block text-[11px] font-bold text-slate-800">👨‍🎓 Estudiante</span>
+                            <span class="block text-[10px] text-slate-500">alumno / alumno123</span>
+                        </button>
+                        <button type="button" onclick="fillDemoCredentials('admin', 'admin123')" class="p-2 rounded-xl bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-300 text-left transition">
+                            <span class="block text-[11px] font-bold text-slate-800">🛡️ Administrador</span>
+                            <span class="block text-[10px] text-slate-500">admin / admin123</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- FORMULARIO 2: SOLICITAR USUARIO Y CONTRASEÑA -->
+            <form id="request-form" onsubmit="handleAccountRequest(event)" class="hidden p-6 space-y-3.5">
+                <div class="p-3 rounded-xl bg-blue-50 border border-blue-100 text-xs text-blue-800">
+                    Completá tus datos de inscripción al ISFD. El Centro de Estudiantes validará tu regularidad y habilitará tu usuario.
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Nombre y Apellido Completo *</label>
+                    <input type="text" id="req-name" required placeholder="Ej: Camila González" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">DNI (sin puntos) *</label>
+                        <input type="text" id="req-dni" required placeholder="Ej: 43987654" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Año que cursás *</label>
+                        <select id="req-year" required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <option value="1° Año">1° Año</option>
+                            <option value="2° Año">2° Año</option>
+                            <option value="3° Año">3° Año</option>
+                            <option value="4° Año">4° Año</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Carrera en la que estás inscripto/a *</label>
+                    <select id="req-carrera" required class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <!-- Opciones cargadas vía JS -->
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Correo Electrónico o WhatsApp *</label>
+                    <input type="text" id="req-contact" required placeholder="Ej: camila@email.com o 3773-401234" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <button type="submit" class="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-md transition">
+                    Enviar Solicitud al Centro de Estudiantes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL DE APROBACIÓN DE SOLICITUD (ADMIN)                  -->
+    <!-- ========================================================= -->
+    <div id="approve-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/70 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden fade-in">
+            <div class="bg-emerald-600 px-6 py-4 text-white flex items-center justify-between">
+                <h3 class="font-bold text-base flex items-center gap-2">
+                    <i data-lucide="user-check" class="w-5 h-5"></i>
+                    Habilitar Cuenta de Estudiante
+                </h3>
+                <button onclick="closeApproveModal()" class="text-white/80 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form onsubmit="confirmApproveRequest(event)" class="p-6 space-y-4">
+                <input type="hidden" id="approve-req-id">
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs space-y-1">
+                    <p class="font-bold text-slate-900 text-sm" id="approve-student-name">Nombre Alumno</p>
+                    <p class="text-slate-600" id="approve-student-info">DNI · Carrera · Año</p>
+                    <p class="text-blue-600 font-medium" id="approve-student-contact">Contacto</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Asignar Usuario *</label>
+                    <input type="text" id="approve-username" required class="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm font-mono">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Asignar Contraseña *</label>
+                    <input type="text" id="approve-password" required class="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm font-mono">
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeApproveModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm">
+                        Aprobar y Activar Usuario
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL DE VISTA PREVIA / DESCARGA DE APUNTE                -->
+    <!-- ========================================================= -->
+    <div id="preview-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/75 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden fade-in">
+            <div id="preview-header" class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span id="preview-format-badge" class="px-2.5 py-1 rounded-lg text-xs font-extrabold bg-rose-500 text-white">PDF</span>
+                    <h3 id="preview-title" class="font-bold text-sm sm:text-base truncate max-w-md">Título del Apunte</h3>
+                </div>
+                <button onclick="closePreviewModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="flex flex-wrap gap-2 text-xs">
+                    <span id="preview-carrera" class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-semibold">Carrera</span>
+                    <span id="preview-year" class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-semibold">Año</span>
+                    <span id="preview-subject" class="px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 font-semibold">Materia</span>
+                </div>
+                <p id="preview-desc" class="text-sm text-slate-600 leading-relaxed"></p>
+
+                <!-- Simulación visual de hoja de documento -->
+                <div class="bg-slate-100 border border-slate-200 rounded-2xl p-6 text-center space-y-3">
+                    <div class="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-200 mx-auto flex items-center justify-center text-blue-600">
+                        <i data-lucide="file-check-2" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-slate-800" id="preview-filename">archivo_apunte.pdf</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Documento verificado por el Centro de Estudiantes · Listo para descarga directa</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-end gap-2.5 pt-2">
+                    <button onclick="closePreviewModal()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-50">
+                        Cerrar Vista Previa
+                    </button>
+                    <button id="preview-download-btn" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        Descargar Documento Ahora
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER INSTITUCIONAL -->
+    <footer class="bg-white border-t border-slate-200 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-800">Centro de Estudiantes · ISFD</span>
+                <span>—</span>
+                <span>Por una educación pública, gratuita y con acceso igualitario al material de estudio.</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="resetDemoData()" class="text-slate-400 hover:text-rose-600 underline transition" title="Restaurar datos iniciales de prueba">
+                    Restaurar datos demo
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========================================================= -->
+    <!-- LÓGICA JAVASCRIPT COMPLETA                                -->
+    <!-- ========================================================= -->
+    <script>
+        // -------------------------------------------------------------
+        // 1. PALETAS DE COLOR Y CARRERAS INICIALES DEL ISFD
+        // -------------------------------------------------------------
+        const COLOR_THEMES = {
+            indigo: {
+                cardBorder: 'border-indigo-200 hover:border-indigo-500',
+                cardBg: 'bg-white',
+                accentBar: 'bg-indigo-600',
+                iconBg: 'bg-indigo-600',
+                badgeBg: 'bg-indigo-100 text-indigo-800',
+                bannerBg: 'bg-indigo-50/70 border-indigo-200',
+                tabActive: 'bg-indigo-600 text-white shadow-md shadow-indigo-600/25',
+                tabInactive: 'bg-white text-indigo-900 border border-indigo-200 hover:bg-indigo-100/70'
+            },
+            emerald: {
+                cardBorder: 'border-emerald-200 hover:border-emerald-500',
+                cardBg: 'bg-white',
+                accentBar: 'bg-emerald-600',
+                iconBg: 'bg-emerald-600',
+                badgeBg: 'bg-emerald-100 text-emerald-800',
+                bannerBg: 'bg-emerald-50/70 border-emerald-200',
+                tabActive: 'bg-emerald-600 text-white shadow-md shadow-emerald-600/25',
+                tabInactive: 'bg-white text-emerald-900 border border-emerald-200 hover:bg-emerald-100/70'
+            },
+            violet: {
+                cardBorder: 'border-violet-200 hover:border-violet-500',
+                cardBg: 'bg-white',
+                accentBar: 'bg-violet-600',
+                iconBg: 'bg-violet-600',
+                badgeBg: 'bg-violet-100 text-violet-800',
+                bannerBg: 'bg-violet-50/70 border-violet-200',
+                tabActive: 'bg-violet-600 text-white shadow-md shadow-violet-600/25',
+                tabInactive: 'bg-white text-violet-900 border border-violet-200 hover:bg-violet-100/70'
+            },
+            amber: {
+                cardBorder: 'border-amber-200 hover:border-amber-500',
+                cardBg: 'bg-white',
+                accentBar: 'bg-amber-500',
+                iconBg: 'bg-amber-500',
+                badgeBg: 'bg-amber-100 text-amber-900',
+                bannerBg: 'bg-amber-50/70 border-amber-200',
+                tabActive: 'bg-amber-500 text-slate-950 font-extrabold shadow-md shadow-amber-500/25',
+                tabInactive: 'bg-white text-amber-950 border border-amber-200 hover:bg-amber-100/70'
+            },
+            rose: {
+                cardBorder: 'border-rose-200 hover:border-rose-500',
+                cardBg: 'bg-white',
+                accentBar: 'bg-rose-600',
+                iconBg: 'bg-rose-600',
+                badgeBg: 'bg-rose-100 text-rose-800',
+                bannerBg: 'bg-rose-50/70 border-rose-200',
+                tabActive: 'bg-rose-600 text-white shadow-md shadow-rose-600/25',
+                tabInactive: 'bg-white text-rose-900 border border-rose-200 hover:bg-rose-100/70'
+            },
+            cyan: {
+                cardBorder: 'border-cyan-200 hover:border-cyan-500',
+                cardBg: 'bg-white',
+                accentBar: 'bg-cyan-600',
+                iconBg: 'bg-cyan-600',
+                badgeBg: 'bg-cyan-100 text-cyan-900',
+                bannerBg: 'bg-cyan-50/70 border-cyan-200',
+                tabActive: 'bg-cyan-600 text-white shadow-md shadow-cyan-600/25',
+                tabInactive: 'bg-white text-cyan-950 border border-cyan-200 hover:bg-cyan-100/70'
+            }
+        };
+
+        const INITIAL_CARRERAS = [
+            {
+                id: 'prof-matematica',
+                nombre: 'Profesorado de Educación Secundaria en Matemática',
+                tipo: 'Formación Docente · Nivel Secundario',
+                duracion: '4 Años',
+                modalidad: 'Presencial',
+                anios: ['1° Año', '2° Año', '3° Año', '4° Año'],
+                tituloOtorgado: 'Profesor/a de Educación Secundaria en Matemática',
+                orientacion: 'Ciencias Exactas, Álgebra, Geometría y Didáctica Específica',
+                descripcion: 'Formación sólida en pensamiento lógico-matemático, modelización y estrategias pedagógicas innovadoras para escuelas secundarias.',
+                icon: 'sigma',
+                colorKey: 'indigo',
+                theme: COLOR_THEMES.indigo,
+                materiasPorAnio: {
+                    '1° Año': ['Pedagogía', 'Álgebra I', 'Geometría Métrica', 'Cálculo Diferencial e Integral I', 'Lectura y Escritura Académica'],
+                    '2° Año': ['Didáctica General', 'Psicología Educacional', 'Álgebra II', 'Probabilidad y Estadística', 'Didáctica de la Matemática I'],
+                    '3° Año': ['Historia y Política de la Educación Argentina', 'Análisis Matemático III', 'Geometría Analítica', 'Práctica Docente III'],
+                    '4° Año': ['Ética y Construcción de Ciudadanía', 'Modelización Matemática', 'Residencia Pedagógica']
+                }
+            },
+            {
+                id: 'prof-primaria',
+                nombre: 'Profesorado de Educación Primaria',
+                tipo: 'Formación Docente · Nivel Primario',
+                duracion: '4 Años',
+                modalidad: 'Presencial',
+                anios: ['1° Año', '2° Año', '3° Año', '4° Año'],
+                tituloOtorgado: 'Profesor/a de Educación Primaria',
+                orientacion: 'Alfabetización Inicial, Didácticas Areales e Inclusión Educativa',
+                descripcion: 'Preparación integral para la enseñanza en 1° y 2° ciclo de la escuela primaria, articulando lengua, matemática, ciencias y arte.',
+                icon: 'book-open',
+                colorKey: 'emerald',
+                theme: COLOR_THEMES.emerald,
+                materiasPorAnio: {
+                    '1° Año': ['Pedagogía', 'Didáctica General', 'Alfabetización Inicial', 'Matemática y su Didáctica I', 'Práctica Docente I'],
+                    '2° Año': ['Sujetos de la Educación Primaria', 'Lengua y Literatura y su Didáctica', 'Ciencias Sociales y su Didáctica I', 'Ciencias Naturales y su Didáctica I'],
+                    '3° Año': ['Educación Sexual Integral (ESI)', 'Ateneo de Matemática', 'Ateneo de Prácticas del Lenguaje', 'Práctica Docente III'],
+                    '4° Año': ['Educación Inclusiva y Diversidad', 'Residencia Pedagógica Integral', 'Problemáticas Contemporáneas de la Educación Primaria']
+                }
+            },
+            {
+                id: 'prof-inicial',
+                nombre: 'Profesorado de Educación Inicial',
+                tipo: 'Formación Docente · Primera Infancia',
+                duracion: '4 Años',
+                modalidad: 'Presencial',
+                anios: ['1° Año', '2° Año', '3° Año', '4° Año'],
+                tituloOtorgado: 'Profesor/a de Educación Inicial',
+                orientacion: 'Primera Infancia (45 días a 5 años), Juego, Expresión y Crianza',
+                descripcion: 'Especialización en el desarrollo integral de las infancias, pedagogía del juego, lenguajes expresivos y articulación comunitaria.',
+                icon: 'shapes',
+                colorKey: 'amber',
+                theme: COLOR_THEMES.amber,
+                materiasPorAnio: {
+                    '1° Año': ['Pedagogía', 'El Juego en la Educación Inicial', 'Desarrollo Infantil y Psicología', 'Expresión Corporal y Música', 'Práctica Docente I'],
+                    '2° Año': ['Didáctica de la Educación Inicial', 'Literatura Infantil', 'Educación Visual y Plástica', 'Salud y Cuidado en la Primera Infancia'],
+                    '3° Año': ['Jardín Maternal: Pedagogía de la Crianza', 'Ambiente Natural y Social', 'Práctica Docente III'],
+                    '4° Año': ['Residencia en Jardín Maternal e Infantes', 'Familias, Comunidad y Escuelas']
+                }
+            },
+            {
+                id: 'tec-software',
+                nombre: 'Tecnicatura Superior en Desarrollo de Software',
+                tipo: 'Formación Técnica Superior · IT & Sistemas',
+                duracion: '3 Años',
+                modalidad: 'Presencial',
+                anios: ['1° Año', '2° Año', '3° Año'],
+                tituloOtorgado: 'Técnico/a Superior en Desarrollo de Software',
+                orientacion: 'Programación Full-Stack, Bases de Datos, Redes e Ingeniería de Software',
+                descripcion: 'Carrera técnica de 3 años orientada al diseño, programación, testing y despliegue de aplicaciones web, móviles y sistemas empresariales.',
+                icon: 'code-2',
+                colorKey: 'cyan',
+                theme: COLOR_THEMES.cyan,
+                materiasPorAnio: {
+                    '1° Año': ['Programación I (Lógica y Estructuras)', 'Arquitectura de Computadoras', 'Matemática Aplicada', 'Sistemas Operativos', 'Inglés Técnico I'],
+                    '2° Año': ['Programación Orientada a Objetos', 'Bases de Datos Relacionales y SQL', 'Desarrollo Web Frontend y Backend', 'Ingeniería de Software I'],
+                    '3° Año': ['Desarrollo de Aplicaciones Móviles', 'Seguridad Informática y Redes', 'Práctica Profesionalizante III (Proyecto Final)']
+                }
+            }
+        ];
+
+        // -------------------------------------------------------------
+        // 2. DATOS INICIALES PRECARGADOS (PERSISTIDOS EN LOCALSTORAGE)
+        // -------------------------------------------------------------
+        const INITIAL_USERS = [
+            {
+                id: 'u-admin',
+                name: 'Comisión Centro de Estudiantes',
+                dni: '00000000',
+                carreraId: 'prof-matematica',
+                year: '4° Año',
+                username: 'admin',
+                password: 'admin123',
+                role: 'admin'
+            },
+            {
+                id: 'u-alumno',
+                name: 'Lucas Martínez (Demo)',
+                dni: '41234567',
+                carreraId: 'prof-matematica',
+                year: '1° Año',
+                username: 'alumno',
+                password: 'alumno123',
+                role: 'student'
+            }
+        ];
+
+        const INITIAL_REQUESTS = [
+            {
+                id: 'req-1',
+                name: 'Valentina Gómez',
+                dni: '43567890',
+                carreraId: 'prof-primaria',
+                year: '1° Año',
+                contact: 'valentina.gomez@gmail.com',
+                date: '16/11/2026'
+            },
+            {
+                id: 'req-2',
+                name: 'Mateo Benítez',
+                dni: '44112233',
+                carreraId: 'tec-software',
+                year: '2° Año',
+                contact: '3773-459812',
+                date: '17/11/2026'
+            }
+        ];
+
+        const INITIAL_MATERIALS = [
+            // Matemática 1° Año
+            {
+                id: 'mat-1',
+                carreraId: 'prof-matematica',
+                year: '1° Año',
+                subject: 'Pedagogía',
+                title: 'Módulo 1: El saber pedagógico y la escuela moderna',
+                description: 'Compilado de textos de Silvina Gvirtz y Mariano Palamidessi sobre educación, poder y transmisión cultural.',
+                format: 'PDF',
+                fileName: 'Pedagogia_Modulo1_Gvirtz.pdf',
+                date: '10/03/2026',
+                uploadedBy: 'Centro de Estudiantes'
+            },
+            {
+                id: 'mat-2',
+                carreraId: 'prof-matematica',
+                year: '1° Año',
+                subject: 'Pedagogía',
+                title: 'Guía de Lectura y Preguntas de Parcial - Unidad 1',
+                description: 'Documento editable con consignas de análisis grupal y cuadro comparativo de corrientes pedagógicas.',
+                format: 'DOCX',
+                fileName: 'Guia_Parcial_Pedagogia_U1.docx',
+                date: '18/03/2026',
+                uploadedBy: 'Centro de Estudiantes'
+            },
+            {
+                id: 'mat-3',
+                carreraId: 'prof-matematica',
+                year: '1° Año',
+                subject: 'Álgebra I',
+                title: 'Teoría de Conjuntos, Lógica Proposicional y Estructuras',
+                description: 'Apunte teórico-práctico con 80 ejercicios resueltos paso a paso por la cátedra.',
+                format: 'PDF',
+                fileName: 'Algebra1_Conjuntos_Logica.pdf',
+                date: '22/03/2026',
+                uploadedBy: 'Centro de Estudiantes'
+            },
+            {
+                id: 'mat-4',
+                carreraId: 'prof-matematica',
+                year: '2° Año',
+                subject: 'Didáctica de la Matemática I',
+                title: 'Teoría de las Situaciones Didácticas - Guy Brousseau',
+                description: 'Síntesis conceptual sobre contrato didáctico, devolución e institucionalización del saber.',
+                format: 'PDF',
+                fileName: 'Brousseau_Situaciones_Didacticas.pdf',
+                date: '05/04/2026',
+                uploadedBy: 'Centro de Estudiantes'
+            },
+            // Primaria
+            {
+                id: 'mat-5',
+                carreraId: 'prof-primaria',
+                year: '1° Año',
+                subject: 'Alfabetización Inicial',
+                title: 'Los sistemas de escritura en el desarrollo del niño - Emilia Ferreiro',
+                description: 'Capítulos 1 al 4 digitalizados con excelente calidad + glosario de términos psicogenéticos.',
+                format: 'PDF',
+                fileName: 'Ferreiro_Sistemas_Escritura.pdf',
+                date: '12/03/2026',
+                uploadedBy: 'Centro de Estudiantes'
+            },
+            {
+                id: 'mat-6',
+                carreraId: 'prof-primaria',
+                year: '1° Año',
+                subject: 'Práctica Docente I',
+                title: 'Planilla de Observación Institucional y Registro Etnográfico',
+                description: 'Modelo oficial en Word listo para completar durante las observaciones en escuelas asociadas.',
+                format: 'DOCX',
+                fileName: 'Planilla_Observacion_Practica1.docx',
+                date: '02/04/2026',
+                uploadedBy: 'Centro de Estudiantes'
+            },
+            // Inicial
+            {
+                id: 'mat-7',
+                carreraId: 'prof-inicial',
+                year: '1° Año',
+                subject: 'El Juego en la Educación Inicial',
+                title: 'Juego y Educación Inicial - Patricia Sarlé (Cuadernillo Completo)',
+                description: 'Clasificación de juegos dramáticos, de construcción y con reglas convencionales en el Nivel Inicial.',
+                format: 'PDF',
+                fileName: 'Sarle_Juego_Nivel_Inicial.pdf',
+                date: '15/03/2026',
+                uploadedBy: 'Centro de Estudiantes'
+            },
+            {
+                id: 'mat-8',
+                carreraId: 'prof-inicial',
+                year: '2° Año',
+                subject: 'Literatura Infantil',
+                title: 'Antología de Cuentos, Poesías y Secuencia Didáctica Modelo',
+                description: 'Selección de autores argentinos para salas de 3, 4 y 5 años + plantilla editable de planificación.',
+                format: 'DOCX',
+                fileName: 'Antologia_Secuencia_Literatura.docx',
+                date: '19/04/2026',
+                uploadedBy: 'Centro de Estudiantes'
+            },
+            // Tecnicatura en Software
+            {
+                id: 'mat-9',
+                carreraId: 'tec-software',
+                year: '1° Año',
+                subject: 'Programación I (Lógica y Estructuras)',
+                title: 'Fundamentos de Algoritmia, Pseudocódigo y Estructuras de Control',
+                description: 'Manual completo de la cátedra con diagramas de flujo, condicionales, bucles y arreglos.',
+                format: 'PDF',
+                fileName: 'Programacion1_Algoritmia_2026.pdf',
+                date: '11/03/2026',
+                uploadedBy: 'Centro de Estudiantes'
+            },
+            {
+                id: 'mat-10',
+                carreraId: 'tec-software',
+                year: '2° Año',
+                subject: 'Bases de Datos Relacionales y SQL',
+                title: 'Modelo Entidad-Relación, Normalización (1FN-3FN) y Consultas SQL',
+                description: 'Guía práctica con casos de estudio empresariales y scripts de creación de tablas.',
+                format: 'PDF',
+                fileName: 'BasesDeDatos_MER_SQL.pdf',
+                date: '28/03/2026',
+                uploadedBy: 'Centro de Estudiantes'
+            },
+            {
+                id: 'mat-11',
+                carreraId: 'tec-software',
+                year: '2° Año',
+                subject: 'Desarrollo Web Frontend y Backend',
+                title: 'Plantilla de Documentación Técnica de Proyecto Web (SRS)',
+                description: 'Documento modelo en formato Word para presentar los requerimientos funcionales de la aplicación.',
+                format: 'DOCX',
+                fileName: 'Plantilla_Documentacion_Web_SRS.docx',
+                date: '14/04/2026',
+                uploadedBy: 'Centro de Estudiantes'
+            }
+        ];
+
+        // -------------------------------------------------------------
+        // 3. ESTADO GLOBAL DE LA APLICACIÓN
+        // -------------------------------------------------------------
+        let state = {
+            carreras: [],
+            users: [],
+            requests: [],
+            materials: [],
+            currentUser: null,
+            selectedCarreraId: null,
+            selectedYear: null,
+            activeAdminTab: 'solicitudes'
+        };
+
+        // Cargar o inicializar datos en localStorage
+        function initStorage() {
+            const savedCarreras = localStorage.getItem('isfd_carreras');
+            const savedUsers = localStorage.getItem('isfd_users');
+            const savedRequests = localStorage.getItem('isfd_requests');
+            const savedMaterials = localStorage.getItem('isfd_materials');
+            const savedSession = localStorage.getItem('isfd_current_user');
+
+            state.carreras = savedCarreras ? JSON.parse(savedCarreras) : JSON.parse(JSON.stringify(INITIAL_CARRERAS));
+            state.users = savedUsers ? JSON.parse(savedUsers) : [...INITIAL_USERS];
+            state.requests = savedRequests ? JSON.parse(savedRequests) : [...INITIAL_REQUESTS];
+            state.materials = savedMaterials ? JSON.parse(savedMaterials) : [...INITIAL_MATERIALS];
+            state.currentUser = savedSession ? JSON.parse(savedSession) : null;
+
+            saveStorage();
+        }
+
+        function saveStorage() {
+            localStorage.setItem('isfd_carreras', JSON.stringify(state.carreras));
+            localStorage.setItem('isfd_users', JSON.stringify(state.users));
+            localStorage.setItem('isfd_requests', JSON.stringify(state.requests));
+            localStorage.setItem('isfd_materials', JSON.stringify(state.materials));
+            if (state.currentUser) {
+                localStorage.setItem('isfd_current_user', JSON.stringify(state.currentUser));
+            } else {
+                localStorage.removeItem('isfd_current_user');
+            }
+        }
+
+        function resetDemoData() {
+            localStorage.removeItem('isfd_carreras');
+            localStorage.removeItem('isfd_users');
+            localStorage.removeItem('isfd_requests');
+            localStorage.removeItem('isfd_materials');
+            localStorage.removeItem('isfd_current_user');
+            initStorage();
+            populateCarreraSelects();
+            updateAuthUI();
+            renderCarrerasGrid();
+            if (state.selectedCarreraId) {
+                selectCarrera(state.selectedCarreraId);
+            }
+            if (state.currentUser && state.currentUser.role === 'admin') {
+                renderAdminPanel();
+            }
+            showToast('Datos iniciales restaurados correctamente.', 'info');
+        }
+
+        // -------------------------------------------------------------
+        // 4. SISTEMA DE NOTIFICACIONES TOAST
+        // -------------------------------------------------------------
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const styles = {
+                success: 'bg-slate-900 text-white border-emerald-500',
+                error: 'bg-rose-950 text-white border-rose-500',
+                warning: 'bg-amber-950 text-white border-amber-500',
+                info: 'bg-blue-950 text-white border-blue-400'
+            };
+
+            const icons = {
+                success: 'check-circle-2',
+                error: 'alert-circle',
+                warning: 'alert-triangle',
+                info: 'info'
+            };
+
+            const iconColors = {
+                success: 'text-emerald-400',
+                error: 'text-rose-400',
+                warning: 'text-amber-400',
+                info: 'text-blue-400'
+            };
+
+            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3.5 rounded-2xl shadow-xl border-l-4 ${styles[type] || styles.success} fade-in text-xs sm:text-sm font-medium`;
+            toast.innerHTML = `
+                <i data-lucide="${icons[type] || 'info'}" class="w-5 h-5 shrink-0 ${iconColors[type]}"></i>
+                <span class="flex-1">${message}</span>
+            `;
+
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                toast.style.transition = 'all 0.25s ease';
+                setTimeout(() => toast.remove(), 260);
+            }, 3800);
+        }
+
+        // -------------------------------------------------------------
+        // 5. AUTENTICACIÓN, ROLES Y SOLICITUD DE CUENTA
+        // -------------------------------------------------------------
+        function updateAuthUI() {
+            const guestControls = document.getElementById('auth-guest-controls');
+            const userControls = document.getElementById('auth-user-controls');
+            const guestBanner = document.getElementById('guest-banner');
+            const adminNavBtn = document.getElementById('nav-btn-admin');
+            const pendingBadge = document.getElementById('admin-pending-badge');
+
+            if (state.currentUser) {
+                guestControls.classList.add('hidden');
+                userControls.classList.remove('hidden');
+                userControls.classList.add('flex');
+                guestBanner.classList.add('hidden');
+
+                document.getElementById('user-display-name').textContent = state.currentUser.name;
+                document.getElementById('user-display-role').textContent = state.currentUser.role === 'admin' ? 'Administrador' : 'Estudiante ISFD';
+                
+                const initials = state.currentUser.name.split(' ').map(n => n[0]).slice(0, 2).join('');
+                document.getElementById('user-avatar-badge').textContent = initials || 'US';
+
+                if (state.currentUser.role === 'admin') {
+                    adminNavBtn.classList.remove('hidden');
+                    adminNavBtn.classList.add('flex');
+                    if (state.requests.length > 0) {
+                        pendingBadge.textContent = state.requests.length;
+                        pendingBadge.classList.remove('hidden');
+                    } else {
+                        pendingBadge.classList.add('hidden');
+                    }
+                } else {
+                    adminNavBtn.classList.add('hidden');
+                    adminNavBtn.classList.remove('flex');
+                }
+            } else {
+                guestControls.classList.remove('hidden');
+                userControls.classList.add('hidden');
+                userControls.classList.remove('flex');
+                guestBanner.classList.remove('hidden');
+                adminNavBtn.classList.add('hidden');
+                adminNavBtn.classList.remove('flex');
+            }
+
+            // Re-renderizar apuntes si hay una carrera abierta para actualizar el estado de botones de descarga
+            if (state.selectedCarreraId && state.selectedYear) {
+                renderMateriasAndMaterials();
+            }
+        }
+
+        function openAuthModal(tab = 'login') {
+            const modal = document.getElementById('auth-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            switchModalTab(tab);
+        }
+
+        function closeAuthModal() {
+            const modal = document.getElementById('auth-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.getElementById('login-error-msg').classList.add('hidden');
+        }
+
+        function switchModalTab(tab) {
+            const loginTab = document.getElementById('modal-tab-login');
+            const reqTab = document.getElementById('modal-tab-request');
+            const loginForm = document.getElementById('login-form');
+            const reqForm = document.getElementById('request-form');
+
+            if (tab === 'login') {
+                loginTab.className = 'py-2 text-xs font-bold rounded-lg bg-white text-slate-900 shadow-sm transition';
+                reqTab.className = 'py-2 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition';
+                loginForm.classList.remove('hidden');
+                reqForm.classList.add('hidden');
+            } else {
+                reqTab.className = 'py-2 text-xs font-bold rounded-lg bg-white text-slate-900 shadow-sm transition';
+                loginTab.className = 'py-2 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition';
+                reqForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            }
+        }
+
+        function fillDemoCredentials(user, pass) {
+            document.getElementById('login-username').value = user;
+            document.getElementById('login-password').value = pass;
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value.trim().toLowerCase();
+            const password = document.getElementById('login-password').value.trim();
+            const errorBox = document.getElementById('login-error-msg');
+
+            const foundUser = state.users.find(u => u.username.toLowerCase() === username && u.password === password);
+
+            if (!foundUser) {
+                errorBox.textContent = 'Usuario o contraseña incorrectos. Si aún no tenés cuenta, podés solicitarla en la pestaña "Solicitar Usuario".';
+                errorBox.classList.remove('hidden');
+                return;
+            }
+
+            state.currentUser = foundUser;
+            saveStorage();
+            updateAuthUI();
+            closeAuthModal();
+            document.getElementById('login-form').reset();
+
+            showToast(`¡Bienvenido/a, ${foundUser.name}!`, 'success');
+
+            if (foundUser.role === 'admin') {
+                navigateTo('admin');
+            }
+        }
+
+        function logout() {
+            state.currentUser = null;
+            saveStorage();
+            updateAuthUI();
+            navigateTo('carreras');
+            showToast('Sesión cerrada correctamente.', 'info');
+        }
+
+        function handleAccountRequest(e) {
+            e.preventDefault();
+            const name = document.getElementById('req-name').value.trim();
+            const dni = document.getElementById('req-dni').value.trim();
+            const year = document.getElementById('req-year').value;
+            const carreraId = document.getElementById('req-carrera').value;
+            const contact = document.getElementById('req-contact').value.trim();
+
+            // Verificar si ya existe una solicitud o usuario con ese DNI
+            if (state.users.some(u => u.dni === dni)) {
+                showToast('Ya existe una cuenta habilitada con ese DNI. Probá iniciar sesión.', 'warning');
+                return;
+            }
+            if (state.requests.some(r => r.dni === dni)) {
+                showToast('Ya tenés una solicitud pendiente de revisión por el Centro de Estudiantes.', 'warning');
+                return;
+            }
+
+            const newRequest = {
+                id: 'req-' + Date.now(),
+                name,
+                dni,
+                carreraId,
+                year,
+                contact,
+                date: new Date().toLocaleDateString('es-AR')
+            };
+
+            state.requests.unshift(newRequest);
+            saveStorage();
+            updateAuthUI();
+            document.getElementById('request-form').reset();
+            closeAuthModal();
+
+            showToast('¡Solicitud enviada! El Centro de Estudiantes revisará tus datos y habilitará tu usuario.', 'success');
+        }
+
+        // -------------------------------------------------------------
+        // 6. NAVEGACIÓN ENTRE VISTAS
+        // -------------------------------------------------------------
+        function navigateTo(view) {
+            const viewCarreras = document.getElementById('view-carreras');
+            const viewAdmin = document.getElementById('view-admin');
+
+            if (view === 'admin') {
+                if (!state.currentUser || state.currentUser.role !== 'admin') {
+                    showToast('Acceso restringido solo para administradores del Centro de Estudiantes.', 'error');
+                    return;
+                }
+                viewCarreras.classList.add('hidden');
+                viewAdmin.classList.remove('hidden');
+                renderAdminPanel();
+            } else {
+                viewAdmin.classList.add('hidden');
+                viewCarreras.classList.remove('hidden');
+                renderCarrerasGrid();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // -------------------------------------------------------------
+        // 7. RENDERIZADO DE CARRERAS, AÑOS Y BANCO DE APUNTES
+        // -------------------------------------------------------------
+        function renderCarrerasGrid() {
+            const grid = document.getElementById('carreras-grid');
+            const countBadge = document.getElementById('carreras-total-badge');
+            if (countBadge) {
+                countBadge.textContent = `${state.carreras.length} ${state.carreras.length === 1 ? 'propuesta formativa disponible' : 'propuestas formativas disponibles'}`;
+            }
+            grid.innerHTML = '';
+
+            state.carreras.forEach(carrera => {
+                const isSelected = state.selectedCarreraId === carrera.id;
+                const totalMaterials = state.materials.filter(m => m.carreraId === carrera.id).length;
+                const theme = carrera.theme || COLOR_THEMES[carrera.colorKey] || COLOR_THEMES.indigo;
+
+                const card = document.createElement('div');
+                card.onclick = () => selectCarrera(carrera.id);
+                card.className = `group relative rounded-2xl border-2 p-5 sm:p-6 cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md overflow-hidden ${theme.cardBg} ${isSelected ? 'ring-2 ring-offset-2 ring-blue-600 border-blue-600' : theme.cardBorder}`;
+
+                card.innerHTML = `
+                    <!-- Franja superior de identidad cromática -->
+                    <div class="absolute top-0 left-0 right-0 h-1.5 ${theme.accentBar}"></div>
+
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${theme.iconBg} text-white flex items-center justify-center shadow-md shrink-0 group-hover:scale-105 transition-transform">
+                                <i data-lucide="${carrera.icon || 'book-open'}" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+                            </div>
+                            <div>
+                                <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                    <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md ${theme.badgeBg}">
+                                        ${carrera.tipo}
+                                    </span>
+                                    <span class="text-xs font-semibold text-slate-500 flex items-center gap-1">
+                                        <i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${carrera.duracion}
+                                    </span>
+                                    ${carrera.modalidad ? `<span class="text-[11px] font-medium text-slate-400">· ${carrera.modalidad}</span>` : ''}
+                                </div>
+                                <h3 class="text-base sm:text-lg font-extrabold text-slate-900 group-hover:text-blue-700 transition leading-snug">
+                                    ${carrera.nombre}
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-slate-600 mt-3 line-clamp-2">
+                        ${carrera.descripcion}
+                    </p>
+
+                    <!-- Diferenciadores clave: Orientación y Título -->
+                    <div class="mt-4 pt-3.5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                        <div class="text-slate-600">
+                            <span class="font-bold text-slate-800">Enfoque:</span> ${carrera.orientacion}
+                        </div>
+                        <div class="inline-flex items-center gap-1.5 font-bold text-blue-600 shrink-0">
+                            <span>${totalMaterials} apuntes</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        function selectCarrera(carreraId) {
+            const carrera = state.carreras.find(c => c.id === carreraId);
+            if (!carrera) return;
+
+            const theme = carrera.theme || COLOR_THEMES[carrera.colorKey] || COLOR_THEMES.indigo;
+            state.selectedCarreraId = carreraId;
+            // Si no había año seleccionado o el año no existe en esta carrera, seleccionar 1° Año
+            if (!state.selectedYear || !carrera.anios.includes(state.selectedYear)) {
+                state.selectedYear = carrera.anios[0];
+            }
+
+            renderCarrerasGrid();
+
+            const detailContainer = document.getElementById('carrera-detail-container');
+            const bannerBox = document.getElementById('carrera-banner-box');
+            const iconBox = document.getElementById('selected-carrera-icon');
+            const badge = document.getElementById('selected-carrera-badge');
+
+            detailContainer.classList.remove('hidden');
+            bannerBox.className = `rounded-2xl p-5 sm:p-7 border shadow-sm transition-all ${theme.bannerBg}`;
+            iconBox.className = `w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-md shrink-0 ${theme.iconBg}`;
+            iconBox.innerHTML = `<i data-lucide="${carrera.icon || 'book-open'}" class="w-7 h-7"></i>`;
+
+            badge.className = `text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md ${theme.badgeBg}`;
+            badge.textContent = carrera.tipo;
+
+            document.getElementById('selected-carrera-duration').innerHTML = `<i data-lucide="clock" class="w-3.5 h-3.5"></i> Duración: ${carrera.duracion} · Modalidad: ${carrera.modalidad || 'Presencial'} · Título: ${carrera.tituloOtorgado}`;
+            document.getElementById('selected-carrera-title').textContent = carrera.nombre;
+            document.getElementById('selected-carrera-desc').textContent = carrera.descripcion;
+
+            // Renderizar botones de Años de la Carrera
+            const yearsContainer = document.getElementById('years-tabs-container');
+            yearsContainer.innerHTML = '';
+
+            carrera.anios.forEach(anio => {
+                const isYearSelected = state.selectedYear === anio;
+                const countInYear = state.materials.filter(m => m.carreraId === carrera.id && m.year === anio).length;
+
+                const btn = document.createElement('button');
+                btn.onclick = () => selectYear(anio);
+                btn.className = `px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 ${isYearSelected ? theme.tabActive : theme.tabInactive}`;
+                btn.innerHTML = `
+                    <span>${anio}</span>
+                    <span class="px-2 py-0.5 rounded-full text-[11px] ${isYearSelected ? 'bg-black/20 text-white' : 'bg-slate-100 text-slate-600'}">
+                        ${countInYear}
+                    </span>
+                `;
+                yearsContainer.appendChild(btn);
+            });
+
+            renderMateriasAndMaterials();
+            lucide.createIcons();
+
+            // Desplazar suavemente hacia el selector de años
+            detailContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function closeCarreraDetail() {
+            state.selectedCarreraId = null;
+            state.selectedYear = null;
+            document.getElementById('carrera-detail-container').classList.add('hidden');
+            renderCarrerasGrid();
+        }
+
+        function selectYear(anio) {
+            state.selectedYear = anio;
+            selectCarrera(state.selectedCarreraId);
+        }
+
+        function renderMateriasAndMaterials() {
+            const carrera = state.carreras.find(c => c.id === state.selectedCarreraId);
+            if (!carrera || !state.selectedYear) return;
+
+            const section = document.getElementById('materias-apuntes-section');
+            const heading = document.getElementById('selected-year-heading');
+            const listContainer = document.getElementById('materias-list-container');
+            const formatFilter = document.getElementById('format-filter').value;
+
+            section.classList.remove('hidden');
+            heading.textContent = `Banco de Apuntes por Materia · ${state.selectedYear}`;
+
+            // Obtener materias predefinidas + cualquier materia nueva agregada en materiales
+            const predefinedSubjects = (carrera.materiasPorAnio && carrera.materiasPorAnio[state.selectedYear]) || [];
+            const materialsForYear = state.materials.filter(m => m.carreraId === carrera.id && m.year === state.selectedYear);
+            const dynamicSubjects = materialsForYear.map(m => m.subject);
+            const allSubjects = [...new Set([...predefinedSubjects, ...dynamicSubjects])];
+
+            listContainer.innerHTML = '';
+
+            if (allSubjects.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="bg-white rounded-2xl border border-slate-200 p-8 text-center space-y-2">
+                        <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 mx-auto flex items-center justify-center">
+                            <i data-lucide="folder-plus" class="w-6 h-6"></i>
+                        </div>
+                        <p class="font-bold text-slate-800 text-sm">Aún no hay materias con apuntes cargados para ${state.selectedYear}</p>
+                        <p class="text-xs text-slate-500">El Centro de Estudiantes irá publicando los módulos de cada cátedra a medida que avance el cuatrimestre.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            allSubjects.forEach(subject => {
+                let subjectMaterials = materialsForYear.filter(m => m.subject === subject);
+                if (formatFilter !== 'ALL') {
+                    subjectMaterials = subjectMaterials.filter(m => m.format === formatFilter);
+                }
+
+                const subjectCard = document.createElement('div');
+                subjectCard.className = 'bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden';
+
+                let materialsHTML = '';
+                if (subjectMaterials.length === 0) {
+                    materialsHTML = `
+                        <div class="p-5 text-center text-xs text-slate-500 bg-slate-50/60">
+                            Aún no hay apuntes cargados en formato ${formatFilter === 'ALL' ? 'PDF/DOCX' : formatFilter} para esta materia.
+                        </div>
+                    `;
+                } else {
+                    materialsHTML = `
+                        <div class="divide-y divide-slate-100">
+                            ${subjectMaterials.map(mat => buildMaterialRowHTML(mat)).join('')}
+                        </div>
+                    `;
+                }
+
+                subjectCard.innerHTML = `
+                    <div class="bg-slate-50 px-5 py-3.5 border-b border-slate-200 flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                                <i data-lucide="folder-open" class="w-4 h-4"></i>
+                            </div>
+                            <h4 class="font-bold text-sm sm:text-base text-slate-900">${subject}</h4>
+                        </div>
+                        <span class="text-xs font-semibold text-slate-500 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                            ${subjectMaterials.length} ${subjectMaterials.length === 1 ? 'archivo' : 'archivos'}
+                        </span>
+                    </div>
+                    ${materialsHTML}
+                `;
+
+                listContainer.appendChild(subjectCard);
+            });
+
+            lucide.createIcons();
+        }
+
+        function buildMaterialRowHTML(mat) {
+            const isPdf = mat.format === 'PDF';
+            const badgeStyle = isPdf
+                ? 'bg-rose-100 text-rose-700 border-rose-200'
+                : 'bg-blue-100 text-blue-700 border-blue-200';
+            const iconName = isPdf ? 'file-text' : 'file-type-2';
+
+            const isLoggedIn = Boolean(state.currentUser);
+            const actionButton = isLoggedIn
+                ? `
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button onclick="openPreviewModal('${mat.id}')" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition">
+                            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                            <span class="hidden sm:inline">Vista previa</span>
+                        </button>
+                        <button onclick="downloadMaterial('${mat.id}')" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                            <span>Descargar ${mat.format}</span>
+                        </button>
+                    </div>
+                `
+                : `
+                    <button onclick="openAuthModal('login')" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 text-xs font-bold transition shrink-0">
+                        <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                        <span>Ingresar para descargar</span>
+                    </button>
+                `;
+
+            return `
+                <div class="p-4 sm:px-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50/80 transition">
+                    <div class="flex items-start gap-3.5">
+                        <div class="w-10 h-10 rounded-xl border flex flex-col items-center justify-center shrink-0 font-extrabold text-[10px] ${badgeStyle}">
+                            <i data-lucide="${iconName}" class="w-4 h-4 mb-0.5"></i>
+                            ${mat.format}
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-sm text-slate-900">${mat.title}</h5>
+                            <p class="text-xs text-slate-600 mt-0.5">${mat.description}</p>
+                            <div class="flex flex-wrap items-center gap-3 mt-1.5 text-[11px] text-slate-400">
+                                <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> Subido: ${mat.date}</span>
+                                <span class="flex items-center gap-1"><i data-lucide="file" class="w-3 h-3"></i> ${mat.fileName}</span>
+                            </div>
+                        </div>
+                    </div>
+                    ${actionButton}
+                </div>
+            `;
+        }
+
+        // -------------------------------------------------------------
+        // 8. DESCARGA REAL SIMULADA (GENERACIÓN DE ARCHIVO AL INSTANTE)
+        // -------------------------------------------------------------
+        function downloadMaterial(materialId) {
+            if (!state.currentUser) {
+                openAuthModal('login');
+                return;
+            }
+
+            const mat = state.materials.find(m => m.id === materialId);
+            if (!mat) return;
+
+            const carrera = state.carreras.find(c => c.id === mat.carreraId);
+
+            // Generar un archivo descargable real con los datos institucionales del apunte
+            const fileContent = [
+                '====================================================================',
+                'CENTRO DE ESTUDIANTES - INSTITUTO SUPERIOR DE FORMACIÓN DOCENTE (ISFD)',
+                'BIBLIOTECA DIGITAL DE APUNTES Y MATERIALES DE CURSADA',
+                '====================================================================',
+                '',
+                `CARRERA: ${carrera ? carrera.nombre : mat.carreraId}`,
+                `AÑO: ${mat.year}`,
+                `MATERIA: ${mat.subject}`,
+                `TÍTULO DEL MATERIAL: ${mat.title}`,
+                `FORMATO ORIGINAL: ${mat.format}`,
+                `FECHA DE PUBLICACIÓN: ${mat.date}`,
+                `DESCARGADO POR: ${state.currentUser.name} (Usuario: ${state.currentUser.username})`,
+                '',
+                'DESCRIPCIÓN / CONTENIDO:',
+                mat.description,
+                '',
+                '--------------------------------------------------------------------',
+                'Material provisto de manera libre y gratuita por el Centro de Estudiantes.',
+                '¡Éxitos en tu cursada!'
+            ].join('\n');
+
+            const mimeType = mat.format === 'PDF' ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+            const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = mat.fileName || `${mat.title.replace(/\s+/g, '_')}.${mat.format.toLowerCase()}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            showToast(`Descargando "${mat.fileName}" (${mat.format})...`, 'success');
+        }
+
+        function openPreviewModal(materialId) {
+            const mat = state.materials.find(m => m.id === materialId);
+            if (!mat) return;
+            const carrera = state.carreras.find(c => c.id === mat.carreraId);
+
+            const badge = document.getElementById('preview-format-badge');
+            badge.textContent = mat.format;
+            badge.className = `px-2.5 py-1 rounded-lg text-xs font-extrabold text-white ${mat.format === 'PDF' ? 'bg-rose-600' : 'bg-blue-600'}`;
+
+            document.getElementById('preview-title').textContent = mat.title;
+            document.getElementById('preview-carrera').textContent = carrera ? carrera.nombre : '';
+            document.getElementById('preview-year').textContent = mat.year;
+            document.getElementById('preview-subject').textContent = mat.subject;
+            document.getElementById('preview-desc').textContent = mat.description;
+            document.getElementById('preview-filename').textContent = mat.fileName;
+
+            const dlBtn = document.getElementById('preview-download-btn');
+            dlBtn.onclick = () => {
+                downloadMaterial(mat.id);
+                closePreviewModal();
+            };
+
+            const modal = document.getElementById('preview-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closePreviewModal() {
+            const modal = document.getElementById('preview-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // -------------------------------------------------------------
+        // 9. BÚSQUEDA GLOBAL RÁPIDA
+        // -------------------------------------------------------------
+        function handleGlobalSearch(query) {
+            const q = query.trim().toLowerCase();
+            const resultsWrapper = document.getElementById('global-search-results');
+            const resultsGrid = document.getElementById('search-results-grid');
+            const countSpan = document.getElementById('search-count');
+
+            if (q.length < 2) {
+                resultsWrapper.classList.add('hidden');
+                return;
+            }
+
+            const matches = state.materials.filter(m =>
+                m.title.toLowerCase().includes(q) ||
+                m.subject.toLowerCase().includes(q) ||
+                m.description.toLowerCase().includes(q)
+            );
+
+            countSpan.textContent = matches.length;
+            resultsWrapper.classList.remove('hidden');
+            resultsGrid.innerHTML = '';
+
+            if (matches.length === 0) {
+                resultsGrid.innerHTML = `
+                    <div class="col-span-full bg-white p-6 rounded-2xl border border-slate-200 text-center text-sm text-slate-500">
+                        No se encontraron apuntes que coincidan con "${query}".
+                    </div>
+                `;
+                return;
+            }
+
+            matches.forEach(mat => {
+                const carrera = state.carreras.find(c => c.id === mat.carreraId);
+                const card = document.createElement('div');
+                card.className = 'bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between gap-3';
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 truncate">${carrera ? carrera.nombre : ''}</span>
+                            <span class="text-[11px] font-extrabold px-2 py-0.5 rounded ${mat.format === 'PDF' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'}">${mat.format}</span>
+                        </div>
+                        <p class="text-xs font-semibold text-blue-600">${mat.year} · ${mat.subject}</p>
+                        <h4 class="font-bold text-sm text-slate-900 mt-0.5">${mat.title}</h4>
+                        <p class="text-xs text-slate-500 mt-1 line-clamp-2">${mat.description}</p>
+                    </div>
+                    <div class="pt-2 border-t border-slate-100 flex justify-end">
+                        ${state.currentUser
+                            ? `<button onclick="downloadMaterial('${mat.id}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold"><i data-lucide="download" class="w-3.5 h-3.5"></i> Descargar</button>`
+                            : `<button onclick="openAuthModal('login')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-300 text-xs font-bold"><i data-lucide="lock" class="w-3.5 h-3.5"></i> Ingresar</button>`
+                        }
+                    </div>
+                `;
+                resultsGrid.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        function clearGlobalSearch() {
+            document.getElementById('global-search').value = '';
+            document.getElementById('global-search-results').classList.add('hidden');
+        }
+
+        // -------------------------------------------------------------
+        // 10. PANEL DE ADMINISTRACIÓN
+        // -------------------------------------------------------------
+        function renderAdminPanel() {
+            // Actualizar métricas
+            document.getElementById('stat-pending-count').textContent = state.requests.length;
+            document.getElementById('stat-users-count').textContent = state.users.filter(u => u.role === 'student').length;
+            document.getElementById('stat-materials-count').textContent = state.materials.length;
+
+            renderPendingRequests();
+            renderActiveUsersTable();
+            renderAdminCarrerasList();
+            populateCarreraSelects();
+            populateAdminFormSelects();
+            lucide.createIcons();
+        }
+
+        function switchAdminTab(tab) {
+            state.activeAdminTab = tab;
+            const tabs = ['solicitudes', 'subir', 'carreras-admin', 'usuarios'];
+
+            tabs.forEach(t => {
+                const btn = document.getElementById(`admin-tab-${t}`);
+                const panel = document.getElementById(`admin-panel-${t}`);
+
+                if (t === tab) {
+                    btn.className = 'px-5 py-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap flex items-center gap-2';
+                    panel.classList.remove('hidden');
+                } else {
+                    btn.className = 'px-5 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap flex items-center gap-2';
+                    panel.classList.add('hidden');
+                }
+            });
+            lucide.createIcons();
+        }
+
+        function renderPendingRequests() {
+            const list = document.getElementById('pending-requests-list');
+            list.innerHTML = '';
+
+            if (state.requests.length === 0) {
+                list.innerHTML = `
+                    <div class="col-span-full bg-white p-8 rounded-2xl border border-slate-200 text-center space-y-2">
+                        <div class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 mx-auto flex items-center justify-center">
+                            <i data-lucide="check-check" class="w-6 h-6"></i>
+                        </div>
+                        <p class="font-bold text-slate-800 text-sm">¡Bandeja al día!</p>
+                        <p class="text-xs text-slate-500">No hay solicitudes pendientes de aprobación en este momento.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            state.requests.forEach(req => {
+                const carrera = state.carreras.find(c => c.id === req.carreraId);
+                const card = document.createElement('div');
+                card.className = 'bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between gap-4';
+                card.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <span class="inline-block px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold uppercase mb-1">Pendiente · ${req.date}</span>
+                                <h4 class="font-bold text-base text-slate-900">${req.name}</h4>
+                            </div>
+                            <span class="text-xs font-mono font-bold bg-slate-100 px-2.5 py-1 rounded-lg text-slate-700">DNI: ${req.dni}</span>
+                        </div>
+                        <div class="text-xs text-slate-600 space-y-1 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <p><strong>Carrera:</strong> ${carrera ? carrera.nombre : req.carreraId}</p>
+                            <p><strong>Año:</strong> ${req.year}</p>
+                            <p><strong>Contacto:</strong> ${req.contact}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                        <button onclick="rejectRequest('${req.id}')" class="px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition">
+                            Rechazar
+                        </button>
+                        <button onclick="openApproveModal('${req.id}')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition">
+                            <i data-lucide="user-check" class="w-4 h-4"></i>
+                            Aprobar y Asignar Clave
+                        </button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function openApproveModal(reqId) {
+            const req = state.requests.find(r => r.id === reqId);
+            if (!req) return;
+            const carrera = state.carreras.find(c => c.id === req.carreraId);
+
+            document.getElementById('approve-req-id').value = req.id;
+            document.getElementById('approve-student-name').textContent = req.name;
+            document.getElementById('approve-student-info').textContent = `DNI: ${req.dni} · ${carrera ? carrera.nombre : ''} (${req.year})`;
+            document.getElementById('approve-student-contact').textContent = `Contacto: ${req.contact}`;
+
+            // Sugerir usuario automático (ej. primera letra nombre + apellido sin espacios)
+            const parts = req.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(' ');
+            const suggestedUser = parts.length > 1 ? (parts[0][0] + parts[parts.length - 1]) : parts[0];
+            document.getElementById('approve-username').value = suggestedUser.replace(/[^a-z0-9]/g, '');
+            document.getElementById('approve-password').value = 'isfd' + req.dni.slice(-4);
+
+            const modal = document.getElementById('approve-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeApproveModal() {
+            const modal = document.getElementById('approve-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function confirmApproveRequest(e) {
+            e.preventDefault();
+            const reqId = document.getElementById('approve-req-id').value;
+            const username = document.getElementById('approve-username').value.trim();
+            const password = document.getElementById('approve-password').value.trim();
+
+            const reqIndex = state.requests.findIndex(r => r.id === reqId);
+            if (reqIndex === -1) return;
+
+            if (state.users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+                showToast('Ese nombre de usuario ya está en uso. Elegí otro.', 'error');
+                return;
+            }
+
+            const req = state.requests[reqIndex];
+            const newUser = {
+                id: 'u-' + Date.now(),
+                name: req.name,
+                dni: req.dni,
+                carreraId: req.carreraId,
+                year: req.year,
+                username,
+                password,
+                role: 'student'
+            };
+
+            state.users.push(newUser);
+            state.requests.splice(reqIndex, 1);
+            saveStorage();
+
+            closeApproveModal();
+            updateAuthUI();
+            renderAdminPanel();
+            showToast(`Alumno ${req.name} aprobado. Usuario: ${username} / Clave: ${password}`, 'success');
+        }
+
+        function rejectRequest(reqId) {
+            state.requests = state.requests.filter(r => r.id !== reqId);
+            saveStorage();
+            updateAuthUI();
+            renderAdminPanel();
+            showToast('Solicitud rechazada y eliminada.', 'info');
+        }
+
+        function renderActiveUsersTable() {
+            const tbody = document.getElementById('active-users-tbody');
+            tbody.innerHTML = '';
+
+            state.users.forEach(u => {
+                const carrera = state.carreras.find(c => c.id === u.carreraId);
+                const isAdmin = u.role === 'admin';
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50';
+                tr.innerHTML = `
+                    <td class="py-3 px-3">
+                        <p class="font-bold text-slate-900 text-xs sm:text-sm">${u.name}</p>
+                        <span class="inline-block text-[10px] font-bold uppercase px-2 py-0.5 rounded ${isAdmin ? 'bg-amber-100 text-amber-800' : 'bg-blue-50 text-blue-700'}">
+                            ${isAdmin ? 'Administrador' : 'Estudiante'}
+                        </span>
+                    </td>
+                    <td class="py-3 px-3 font-mono text-xs font-semibold text-slate-700">${u.username}</td>
+                    <td class="py-3 px-3 font-mono text-xs text-slate-500">${u.password}</td>
+                    <td class="py-3 px-3 text-xs text-slate-600">
+                        <span class="block truncate max-w-[180px]">${carrera ? carrera.nombre : '-'}</span>
+                        <span class="text-[11px] text-slate-400">DNI: ${u.dni}</span>
+                    </td>
+                    <td class="py-3 px-3 text-right">
+                        ${isAdmin ? '<span class="text-[11px] text-slate-400">Sistema</span>' : `
+                            <button onclick="deleteStudentUser('${u.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition" title="Eliminar usuario">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        `}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function handleManualCreateUser(e) {
+            e.preventDefault();
+            const name = document.getElementById('manual-name').value.trim();
+            const dni = document.getElementById('manual-dni').value.trim();
+            const carreraId = document.getElementById('manual-carrera').value;
+            const username = document.getElementById('manual-username').value.trim();
+            const password = document.getElementById('manual-password').value.trim();
+
+            if (state.users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+                showToast('Ese usuario ya existe en el sistema.', 'error');
+                return;
+            }
+
+            state.users.push({
+                id: 'u-' + Date.now(),
+                name,
+                dni,
+                carreraId,
+                year: '1° Año',
+                username,
+                password,
+                role: 'student'
+            });
+
+            saveStorage();
+            e.target.reset();
+            renderAdminPanel();
+            showToast(`Cuenta creada para ${name} (${username}).`, 'success');
+        }
+
+        function deleteStudentUser(userId) {
+            state.users = state.users.filter(u => u.id !== userId);
+            saveStorage();
+            renderAdminPanel();
+            showToast('Usuario eliminado del sistema.', 'info');
+        }
+
+        // -------------------------------------------------------------
+        // 11. GESTIÓN DE CARRERAS (AGREGAR, EDITAR, ELIMINAR)
+        // -------------------------------------------------------------
+        function renderAdminCarrerasList() {
+            const list = document.getElementById('admin-carreras-list');
+            const countSpan = document.getElementById('admin-carreras-count');
+            if (!list) return;
+
+            countSpan.textContent = state.carreras.length;
+            list.innerHTML = '';
+
+            state.carreras.forEach(c => {
+                const matCount = state.materials.filter(m => m.carreraId === c.id).length;
+                const theme = c.theme || COLOR_THEMES[c.colorKey] || COLOR_THEMES.indigo;
+
+                const item = document.createElement('div');
+                item.className = 'p-4 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white transition flex items-start justify-between gap-3';
+                item.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-xl ${theme.iconBg} text-white flex items-center justify-center shrink-0">
+                            <i data-lucide="${c.icon || 'book-open'}" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-xs sm:text-sm text-slate-900 leading-snug">${c.nombre}</h4>
+                            <p class="text-[11px] text-slate-500 mt-0.5">${c.duracion} · ${c.modalidad || 'Presencial'} · <strong>${matCount} apuntes</strong></p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 shrink-0">
+                        <button type="button" onclick="editCarrera('${c.id}')" title="Editar carrera" class="p-1.5 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition">
+                            <i data-lucide="pencil" class="w-4 h-4"></i>
+                        </button>
+                        <button type="button" onclick="deleteCarrera('${c.id}')" title="Eliminar carrera" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+            lucide.createIcons();
+        }
+
+        function handleSaveCarrera(e) {
+            e.preventDefault();
+            const editId = document.getElementById('edit-carrera-id').value;
+            const nombre = document.getElementById('car-nombre').value.trim();
+            const tipo = document.getElementById('car-tipo').value;
+            const durationNum = parseInt(document.getElementById('car-duracion').value, 10) || 4;
+            const tituloOtorgado = document.getElementById('car-titulo').value.trim();
+            const modalidad = document.getElementById('car-modalidad').value;
+            const orientacion = document.getElementById('car-orientacion').value.trim();
+            const descripcion = document.getElementById('car-descripcion').value.trim();
+            const materiasRaw = document.getElementById('car-materias-iniciales').value.trim();
+            const colorKey = document.getElementById('car-color').value;
+            const icon = document.getElementById('car-icon').value;
+
+            const anios = [];
+            for (let i = 1; i <= durationNum; i++) {
+                anios.push(`${i}° Año`);
+            }
+
+            const theme = COLOR_THEMES[colorKey] || COLOR_THEMES.indigo;
+            const initialSubjects = materiasRaw
+                ? materiasRaw.split(',').map(s => s.trim()).filter(Boolean)
+                : [];
+
+            if (editId) {
+                const idx = state.carreras.findIndex(c => c.id === editId);
+                if (idx !== -1) {
+                    const existingMaterias = state.carreras[idx].materiasPorAnio || {};
+                    if (initialSubjects.length > 0) {
+                        existingMaterias['1° Año'] = [...new Set([...(existingMaterias['1° Año'] || []), ...initialSubjects])];
+                    }
+
+                    state.carreras[idx] = {
+                        ...state.carreras[idx],
+                        nombre,
+                        tipo,
+                        duracion: `${durationNum} Años`,
+                        modalidad,
+                        anios,
+                        tituloOtorgado,
+                        orientacion,
+                        descripcion,
+                        icon,
+                        colorKey,
+                        theme,
+                        materiasPorAnio: existingMaterias
+                    };
+                    showToast(`Carrera "${nombre}" actualizada correctamente.`, 'success');
+                }
+            } else {
+                const slug = nombre
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/(^-|-$)/g, '') + '-' + Date.now().toString().slice(-4);
+
+                const materiasPorAnio = {};
+                anios.forEach(a => { materiasPorAnio[a] = []; });
+                if (initialSubjects.length > 0) {
+                    materiasPorAnio['1° Año'] = initialSubjects;
+                }
+
+                const newCarrera = {
+                    id: slug,
+                    nombre,
+                    tipo,
+                    duracion: `${durationNum} Años`,
+                    modalidad,
+                    anios,
+                    tituloOtorgado,
+                    orientacion,
+                    descripcion,
+                    icon,
+                    colorKey,
+                    theme,
+                    materiasPorAnio
+                };
+
+                state.carreras.push(newCarrera);
+                showToast(`¡Nueva carrera "${nombre}" creada y publicada!`, 'success');
+            }
+
+            saveStorage();
+            resetCarreraForm();
+            populateCarreraSelects();
+            renderCarrerasGrid();
+            renderAdminPanel();
+        }
+
+        function editCarrera(carreraId) {
+            const c = state.carreras.find(item => item.id === carreraId);
+            if (!c) return;
+
+            document.getElementById('edit-carrera-id').value = c.id;
+            document.getElementById('car-nombre').value = c.nombre;
+            document.getElementById('car-tipo').value = c.tipo;
+            document.getElementById('car-duracion').value = parseInt(c.duracion, 10) || c.anios.length || 4;
+            document.getElementById('car-titulo').value = c.tituloOtorgado || '';
+            document.getElementById('car-modalidad').value = c.modalidad || 'Presencial';
+            document.getElementById('car-orientacion').value = c.orientacion || '';
+            document.getElementById('car-descripcion').value = c.descripcion || '';
+            document.getElementById('car-color').value = c.colorKey || 'indigo';
+            document.getElementById('car-icon').value = c.icon || 'book-open';
+            document.getElementById('car-materias-iniciales').value = ((c.materiasPorAnio && c.materiasPorAnio['1° Año']) || []).join(', ');
+
+            document.getElementById('carrera-form-heading').textContent = 'Editar Carrera Existente';
+            document.getElementById('save-carrera-submit-btn').innerHTML = `<i data-lucide="save" class="w-4 h-4"></i> Guardar Cambios`;
+            document.getElementById('cancel-edit-carrera-btn').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function resetCarreraForm() {
+            document.getElementById('manage-carrera-form').reset();
+            document.getElementById('edit-carrera-id').value = '';
+            document.getElementById('carrera-form-heading').textContent = 'Agregar Nueva Carrera al ISFD';
+            document.getElementById('save-carrera-submit-btn').innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4"></i> Guardar y Publicar Carrera`;
+            document.getElementById('cancel-edit-carrera-btn').classList.add('hidden');
+            lucide.createIcons();
+        }
+
+        function deleteCarrera(carreraId) {
+            if (state.carreras.length <= 1) {
+                showToast('Debe existir al menos una carrera activa en el sistema.', 'warning');
+                return;
+            }
+            const c = state.carreras.find(item => item.id === carreraId);
+            if (!c) return;
+
+            const associatedMaterials = state.materials.filter(m => m.carreraId === carreraId).length;
+            state.carreras = state.carreras.filter(item => item.id !== carreraId);
+            if (associatedMaterials > 0) {
+                state.materials = state.materials.filter(m => m.carreraId !== carreraId);
+            }
+            if (state.selectedCarreraId === carreraId) {
+                closeCarreraDetail();
+            }
+
+            saveStorage();
+            populateCarreraSelects();
+            renderCarrerasGrid();
+            renderAdminPanel();
+            showToast(
+                associatedMaterials > 0
+                    ? `Carrera "${c.nombre}" y sus ${associatedMaterials} apuntes fueron eliminados.`
+                    : `Carrera "${c.nombre}" eliminada del catálogo.`,
+                'info'
+            );
+        }
+
+        // -------------------------------------------------------------
+        // 12. FORMULARIO DE CARGA DE MATERIAL (ADMIN)
+        // -------------------------------------------------------------
+        function populateCarreraSelects() {
+            const selects = ['req-carrera', 'mat-carrera', 'manual-carrera'];
+            selects.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const previousValue = el.value;
+                el.innerHTML = state.carreras.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+                if (previousValue && state.carreras.some(c => c.id === previousValue)) {
+                    el.value = previousValue;
+                }
+            });
+        }
+
+        function populateAdminFormSelects() {
+            updateFormYears();
+        }
+
+        function updateFormYears() {
+            const carreraId = document.getElementById('mat-carrera').value;
+            const carrera = state.carreras.find(c => c.id === carreraId);
+            const yearSelect = document.getElementById('mat-year');
+            if (!carrera || !yearSelect) return;
+
+            yearSelect.innerHTML = carrera.anios.map(a => `<option value="${a}">${a}</option>`).join('');
+            updateFormSubjects();
+        }
+
+        function updateFormSubjects() {
+            const carreraId = document.getElementById('mat-carrera').value;
+            const year = document.getElementById('mat-year').value;
+            const carrera = state.carreras.find(c => c.id === carreraId);
+            const subjectSelect = document.getElementById('mat-subject');
+            if (!carrera || !subjectSelect) return;
+
+            const predefined = (carrera.materiasPorAnio && carrera.materiasPorAnio[year]) || [];
+            const dynamic = state.materials.filter(m => m.carreraId === carreraId && m.year === year).map(m => m.subject);
+            const subjects = [...new Set([...predefined, ...dynamic])];
+
+            if (subjects.length === 0) {
+                subjectSelect.innerHTML = `<option value="General / Troncal">General / Troncal (o escribí la materia a la derecha)</option>`;
+            } else {
+                subjectSelect.innerHTML = subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+            }
+        }
+
+        function handleUploadMaterial(e) {
+            e.preventDefault();
+            const carreraId = document.getElementById('mat-carrera').value;
+            const year = document.getElementById('mat-year').value;
+            const selectedSub = document.getElementById('mat-subject').value;
+            const customSub = document.getElementById('mat-custom-subject').value.trim();
+            const subject = customSub || selectedSub;
+
+            const title = document.getElementById('mat-title').value.trim();
+            const description = document.getElementById('mat-desc').value.trim();
+            const format = document.getElementById('mat-format').value;
+
+            const cleanFileName = selectedUploadedFileName || `${title.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, '').trim().replace(/\s+/g, '_')}.${format.toLowerCase()}`;
+
+            const newMaterial = {
+                id: 'mat-' + Date.now(),
+                carreraId,
+                year,
+                subject,
+                title,
+                description,
+                format,
+                fileName: cleanFileName,
+                date: new Date().toLocaleDateString('es-AR'),
+                uploadedBy: state.currentUser ? state.currentUser.name : 'Administrador'
+            };
+
+            state.materials.unshift(newMaterial);
+            saveStorage();
+
+            e.target.reset();
+            selectedUploadedFileName = '';
+            document.getElementById('mat-file-feedback').textContent = 'Si no adjuntás un archivo local, se generará un enlace institucional de descarga.';
+            updateFormYears();
+            renderAdminPanel();
+
+            showToast(`¡Material "${title}" (${format}) publicado en ${subject}!`, 'success');
+        }
+
+        // -------------------------------------------------------------
+        // 12. INICIALIZACIÓN AL CARGAR LA PÁGINA
+        // -------------------------------------------------------------
+        window.addEventListener('DOMContentLoaded', () => {
+            initStorage();
+            populateCarreraSelects();
+            updateAuthUI();
+            renderCarrerasGrid();
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
