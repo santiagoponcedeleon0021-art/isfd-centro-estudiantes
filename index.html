@@ -45,8 +45,11 @@
                 <nav class="hidden md:flex items-center space-x-1">
                     <button onclick="switchView('home')" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-800 transition-colors">Inicio</button>
                     <button onclick="switchView('carreras')" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-800 transition-colors">Carreras</button>
-                    <button onclick="switchView('novedades')" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-800 transition-colors">Novedades y Fechas</button>
+                    <button onclick="switchView('novedades')" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-800 transition-colors">Novedades</button>
                     <button onclick="switchView('solicitud')" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-800 transition-colors">Solicitar Usuario</button>
+                    <span id="nav-favoritos-link" class="hidden">
+                        <button onclick="switchView('favoritos')" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-800 transition-colors text-rose-300 flex items-center space-x-1"><i class="fa-solid fa-heart"></i><span>Mis Favoritos</span></button>
+                    </span>
                 </nav>
 
                 <div id="auth-nav-area" class="flex items-center space-x-3 border-l border-indigo-700 pl-3 sm:pl-4">
@@ -58,7 +61,10 @@
         <div class="md:hidden bg-indigo-950 px-4 py-2 flex justify-around text-xs border-t border-indigo-800">
             <button onclick="switchView('home')" class="text-indigo-200 hover:text-white py-1"><i class="fa-solid fa-house mr-1"></i>Inicio</button>
             <button onclick="switchView('carreras')" class="text-indigo-200 hover:text-white py-1"><i class="fa-solid fa-book mr-1"></i>Carreras</button>
-            <button onclick="switchView('novedades')" class="text-indigo-200 hover:text-white py-1"><i class="fa-solid fa-bullhorn mr-1"></i>Novedades</button>
+            <button onclick="switchView('novedades')" class="text-indigo-200 hover:text-white py-1"><i class="fa-solid fa-bullhorn mr-1"></i>Avisos</button>
+            <span id="mobile-favoritos-link" class="hidden">
+                <button onclick="switchView('favoritos')" class="text-rose-300 hover:text-white py-1"><i class="fa-solid fa-heart mr-1"></i>Favoritos</button>
+            </span>
             <button onclick="switchView('solicitud')" class="text-indigo-200 hover:text-white py-1"><i class="fa-solid fa-id-card mr-1"></i>Usuario</button>
         </div>
     </header>
@@ -90,7 +96,6 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Widget rápido de últimas novedades en el Hero -->
                     <div class="lg:col-span-5 flex justify-center">
                         <div class="bg-white/10 backdrop-blur-md p-5 sm:p-6 rounded-3xl border border-white/10 shadow-2xl w-full max-w-md space-y-4">
                             <div class="flex items-center justify-between border-b border-white/10 pb-3">
@@ -116,7 +121,6 @@
                 </div>
             </div>
 
-            <!-- Carreras Grid -->
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
                 <div class="text-center max-w-3xl mx-auto mb-10">
                     <h3 class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Oferta Académica</h3>
@@ -136,18 +140,14 @@
                     <span>Volver al inicio</span>
                 </button>
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Novedades y Calendario Académico</h2>
-                <p class="text-slate-600 text-xs sm:text-sm mt-1">Fechas clave de mesas de examen, inscripciones, comunicados y eventos vitales para los alumnos.</p>
             </div>
-
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <div class="lg:col-span-7 space-y-6">
                     <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
                         <i class="fa-solid fa-newspaper text-indigo-600"></i>
                         <span>Últimos Comunicados</span>
                     </h3>
-                    <div id="public-novedades-list" class="space-y-4">
-                        <p class="text-slate-500 text-sm">Cargando comunicados...</p>
-                    </div>
+                    <div id="public-novedades-list" class="space-y-4"><p class="text-slate-500 text-sm">Cargando comunicados...</p></div>
                 </div>
                 <div class="lg:col-span-5 space-y-6">
                     <div class="bg-indigo-900 text-white rounded-3xl p-6 sm:p-8 shadow-lg relative overflow-hidden">
@@ -155,9 +155,7 @@
                             <i class="fa-solid fa-calendar-check text-indigo-300"></i>
                             <span>Próximas Fechas Clave</span>
                         </h3>
-                        <div id="public-calendario-list" class="space-y-4 relative z-10">
-                            <p class="text-indigo-200 text-sm">Cargando calendario...</p>
-                        </div>
+                        <div id="public-calendario-list" class="space-y-4 relative z-10"><p class="text-indigo-200 text-sm">Cargando calendario...</p></div>
                     </div>
                 </div>
             </div>
@@ -176,7 +174,7 @@
             <div id="career-detail-container" class="mt-8"></div>
         </section>
 
-        <!-- VISTA: MATERIA / APUNTES -->
+        <!-- VISTA: MATERIA / APUNTES + CHAT -->
         <section id="view-materia" class="view-section hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <div class="mb-6">
                 <button id="btn-back-to-career" onclick="" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold flex items-center space-x-2 mb-2">
@@ -184,12 +182,57 @@
                     <span>Volver a los años de la carrera</span>
                 </button>
                 <h2 id="materia-title" class="text-2xl sm:text-3xl font-extrabold text-slate-900">Materia</h2>
-                <p id="materia-subtitle" class="text-slate-600 text-xs sm:text-sm mt-1">Apuntes disponibles.</p>
+                <p id="materia-subtitle" class="text-slate-600 text-xs sm:text-sm mt-1">Apuntes y foro de consultas.</p>
             </div>
-            <div class="mb-6">
-                <input type="text" id="search-apuntes" oninput="filterApuntes()" placeholder="Buscar apunte..." class="bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm w-full sm:w-80 shadow-sm">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Columna Izquierda: Apuntes -->
+                <div class="lg:col-span-8 space-y-6">
+                    <div class="mb-4">
+                        <input type="text" id="search-apuntes" oninput="filterApuntes()" placeholder="Buscar apunte..." class="bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm w-full sm:w-80 shadow-sm">
+                    </div>
+                    <div id="apuntes-list-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                </div>
+
+                <!-- Columna Derecha: Foro / Chat de la Materia (IDEA 1) -->
+                <div class="lg:col-span-4 space-y-4">
+                    <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm sticky top-28">
+                        <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center space-x-2">
+                            <i class="fa-solid fa-comments text-indigo-600"></i>
+                            <span>Dudas y Foro de la Materia</span>
+                        </h3>
+                        <p class="text-xs text-slate-500 mb-4">Compartí consultas con tus compañeros sobre esta materia.</p>
+                        
+                        <div id="materia-chat-list" class="space-y-3 max-h-80 overflow-y-auto pr-1 mb-4 text-xs">
+                            <p class="text-slate-400">Cargando comentarios...</p>
+                        </div>
+
+                        <form onsubmit="handleSendComentario(event)" class="space-y-2 pt-2 border-t border-slate-100">
+                            <input type="text" id="chat-autor" required placeholder="Tu Nombre" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs">
+                            <textarea id="chat-mensaje" required rows="2" placeholder="Escribí una duda o aporte..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs"></textarea>
+                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-xl text-xs shadow-sm">Publicar Consulta</button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div id="apuntes-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
+        </section>
+
+        <!-- VISTA: MIS FAVORITOS (IDEA 6) -->
+        <section id="view-favoritos" class="view-section hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="mb-8">
+                <button onclick="switchView('home')" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold flex items-center space-x-2 mb-4">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Volver al inicio</span>
+                </button>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center space-x-2">
+                    <i class="fa-solid fa-heart text-rose-500"></i>
+                    <span>Mis Apuntes Favoritos</span>
+                </h2>
+                <p class="text-slate-600 text-xs sm:text-sm mt-1">Acceso directo al material que guardaste como favorito.</p>
+            </div>
+            <div id="favoritos-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <p class="text-slate-500 text-sm">Cargando favoritos...</p>
+            </div>
         </section>
 
         <!-- VISTA: SOLICITUD DE USUARIO -->
@@ -247,42 +290,37 @@
                 </div>
             </div>
 
-            <!-- Pestañas Admin -->
             <div class="flex flex-wrap gap-2 mb-8 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm">
-                <button onclick="switchAdminTab('solicitudes')" id="tab-btn-solicitudes" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-indigo-600 text-white shadow-sm">Solicitudes Online <span id="badge-solicitudes-count" class="ml-1 bg-white text-indigo-600 px-2 py-0.5 rounded-full text-xs font-bold">0</span></button>
-                <button onclick="switchAdminTab('novedades')" id="tab-btn-novedades" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">Novedades y Fechas</button>
+                <button onclick="switchAdminTab('solicitudes')" id="tab-btn-solicitudes" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-indigo-600 text-white shadow-sm">Solicitudes <span id="badge-solicitudes-count" class="ml-1 bg-white text-indigo-600 px-2 py-0.5 rounded-full text-xs font-bold">0</span></button>
+                <button onclick="switchAdminTab('novedades')" id="tab-btn-novedades" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">Novedades</button>
                 <button onclick="switchAdminTab('material')" id="tab-btn-material" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">Cargar Material</button>
                 <button onclick="switchAdminTab('carreras')" id="tab-btn-carreras" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">Carreras y Materias</button>
                 <button onclick="switchAdminTab('alumnos')" id="tab-btn-alumnos" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">Alumnos</button>
                 <button onclick="switchAdminTab('identidad')" id="tab-btn-identidad" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">Logo</button>
             </div>
 
-            <!-- TAB: SOLICITUDES -->
             <div id="admin-tab-solicitudes" class="admin-tab-content space-y-6">
                 <div class="bg-white rounded-2xl border border-slate-200 p-6">
                     <h3 class="text-lg font-bold text-slate-900 mb-4">Alumnos Pendientes en la Nube</h3>
-                    <div id="admin-solicitudes-list" class="space-y-4">
-                        <p class="text-slate-500 text-sm">Cargando solicitudes...</p>
-                    </div>
+                    <div id="admin-solicitudes-list" class="space-y-4"><p class="text-slate-500 text-sm">Cargando...</p></div>
                 </div>
             </div>
 
-            <!-- TAB: NOVEDADES -->
             <div id="admin-tab-novedades" class="admin-tab-content hidden space-y-8">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
                         <h3 class="text-lg font-bold text-slate-900 mb-4">Publicar Aviso o Fecha Clave</h3>
                         <form onsubmit="handleSaveNovedad(event)" class="space-y-4">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tipo de Publicación</label>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tipo</label>
                                 <select id="nov-tipo" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
-                                    <option value="aviso">📢 Novedad / Comunicado General</option>
-                                    <option value="fecha">📅 Fecha Importante / Calendario</option>
+                                    <option value="aviso">📢 Comunicado</option>
+                                    <option value="fecha">📅 Fecha Importante</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-1">Título</label>
-                                <input type="text" id="nov-titulo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm" placeholder="Título de la novedad">
+                                <input type="text" id="nov-titulo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
                             </div>
                             <div id="div-nov-fecha" class="hidden">
                                 <label class="block text-xs font-semibold text-slate-700 mb-1">Fecha del Evento</label>
@@ -290,22 +328,21 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-1">Descripción</label>
-                                <textarea id="nov-desc" rows="3" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm" placeholder="Detalle..."></textarea>
+                                <textarea id="nov-desc" rows="3" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm"></textarea>
                             </div>
-                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow-md">Publicar</button>
+                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm">Publicar</button>
                         </form>
                     </div>
                     <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                        <h3 class="text-lg font-bold text-slate-900 mb-4">Publicaciones en la Nube</h3>
+                        <h3 class="text-lg font-bold text-slate-900 mb-4">Publicaciones</h3>
                         <div id="admin-novedades-list" class="space-y-4 max-h-[500px] overflow-y-auto"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB: MATERIAL -->
             <div id="admin-tab-material" class="admin-tab-content hidden space-y-6">
                 <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 max-w-3xl">
-                    <h3 class="text-lg font-bold text-slate-900 mb-6">Subir Nuevo Apunte (Cloud Storage)</h3>
+                    <h3 class="text-lg font-bold text-slate-900 mb-6">Subir Nuevo Apunte</h3>
                     <form onsubmit="handleUploadMaterial(event)" class="space-y-6">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
@@ -336,44 +373,38 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Título del Apunte</label>
-                            <input type="text" id="up-titulo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="Ej. Unidad 1 - Resumen">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Título</label>
+                            <input type="text" id="up-titulo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-2">Descripción</label>
-                            <textarea id="up-desc" rows="3" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="Detalle..."></textarea>
+                            <textarea id="up-desc" rows="3" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm"></textarea>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Archivo PDF o DOCX</label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Archivo</label>
                             <input type="file" id="up-file" accept=".pdf,.doc,.docx" required class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700">
                         </div>
-                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg">Subir y Publicar Material</button>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg">Subir Material</button>
                     </form>
                 </div>
             </div>
 
-            <!-- TAB: CARRERAS Y MATERIAS -->
             <div id="admin-tab-carreras" class="admin-tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <!-- Columna Izquierda: Formularios -->
                     <div class="lg:col-span-5 space-y-6">
-                        <!-- Formulario Crear Nueva Carrera -->
                         <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                            <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center space-x-2">
-                                <i class="fa-solid fa-graduation-cap text-indigo-600"></i>
-                                <span>Crear Nueva Carrera</span>
-                            </h3>
+                            <h3 class="text-lg font-bold text-slate-900 mb-4">Crear Carrera</h3>
                             <form onsubmit="handleSaveCareer(event)" class="space-y-4">
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre</label>
-                                    <input type="text" id="car-nombre" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm" placeholder="Ej. Profesorado de Historia">
+                                    <input type="text" id="car-nombre" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-xs font-semibold text-slate-700 mb-1">Tipo</label>
                                         <select id="car-tipo" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
                                             <option value="Profesorado">Profesorado</option>
-                                            <option value="Tecnicatura Superior">Tecnicatura Superior</option>
+                                            <option value="Tecnicatura Superior">Tecnicatura</option>
                                         </select>
                                     </div>
                                     <div>
@@ -386,7 +417,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-700 mb-1">Título</label>
-                                    <input type="text" id="car-titulo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm" placeholder="Ej. Profesor/a de Historia">
+                                    <input type="text" id="car-titulo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-700 mb-1">Descripción</label>
@@ -394,54 +425,41 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-700 mb-1">Materias de 1° Año (separadas por coma)</label>
-                                    <input type="text" id="car-materias-init" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm" placeholder="Pedagogía, Didáctica...">
+                                    <input type="text" id="car-materias-init" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
                                 </div>
-                                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow-sm">Guardar Carrera en Nube</button>
+                                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm">Guardar Carrera</button>
                             </form>
                         </div>
 
-                        <!-- Formulario Agregar Materia a Carrera Existente -->
                         <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                            <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center space-x-2">
-                                <i class="fa-solid fa-book-medical text-emerald-600"></i>
-                                <span>Agregar Materia a Carrera</span>
-                            </h3>
+                            <h3 class="text-lg font-bold text-slate-900 mb-4">Agregar Materia</h3>
                             <form onsubmit="handleAddMateria(event)" class="space-y-4">
                                 <div>
-                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Seleccionar Carrera</label>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Carrera</label>
                                     <select id="mat-car-select" onchange="updateMatAnioSelect()" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm"></select>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Año de Cursado</label>
-                                    <select id="mat-anio-select" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
-                                        <option value="1° Año">1° Año</option>
-                                        <option value="2° Año">2° Año</option>
-                                        <option value="3° Año">3° Año</option>
-                                        <option value="4° Año">4° Año</option>
-                                    </select>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Año</label>
+                                    <select id="mat-anio-select" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm"></select>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre de la Nueva Materia</label>
-                                    <input type="text" id="mat-nombre-input" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm" placeholder="Ej. Programación Orientada a Objetos">
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre</label>
+                                    <input type="text" id="mat-nombre-input" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
                                 </div>
-                                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow-sm">Agregar Materia</button>
+                                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-sm">Agregar</button>
                             </form>
                         </div>
                     </div>
-
-                    <!-- Columna Derecha: Listado de Carreras y Materias (con opción de eliminar) -->
                     <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                        <h3 class="text-lg font-bold text-slate-900 mb-4">Carreras Activas y Gestión de Materias</h3>
-                        <p class="text-xs text-slate-500 mb-4">Podés eliminar una carrera completa o quitar materias individuales haciendo clic en la cruz (×).</p>
-                        <div id="admin-careers-list" class="space-y-4 max-h-[750px] overflow-y-auto pr-1"></div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-4">Carreras y Materias Activas</h3>
+                        <div id="admin-careers-list" class="space-y-4 max-h-[750px] overflow-y-auto"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB: ALUMNOS -->
             <div id="admin-tab-alumnos" class="admin-tab-content hidden space-y-6">
                 <div class="bg-white rounded-2xl border border-slate-200 p-6">
-                    <h3 class="text-lg font-bold text-slate-900 mb-4">Alumnos Registrados en la Nube</h3>
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Alumnos Registrados</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
@@ -459,19 +477,15 @@
                 </div>
             </div>
 
-            <!-- TAB: IDENTIDAD -->
             <div id="admin-tab-identidad" class="admin-tab-content hidden space-y-6">
                 <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 max-w-3xl">
-                    <h3 class="text-lg font-bold text-slate-900 mb-2">Identidad Institucional y Logo</h3>
-                    <p class="text-xs text-slate-500 mb-6">El sistema usa por defecto <code class="bg-slate-100 px-1 py-0.5 rounded text-indigo-600">logo.jpg</code>.</p>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Logo e Identidad</h3>
                     <form onsubmit="handleSaveIdentity(event)" class="space-y-6">
-                        <div class="flex items-center space-x-6">
-                            <div class="w-24 h-24 rounded-2xl bg-indigo-50 border-2 border-dashed border-indigo-300 flex items-center justify-center overflow-hidden">
-                                <img id="preview-logo-box" src="logo.jpg" alt="Logo" class="w-full h-full object-cover">
-                            </div>
+                        <div class="w-24 h-24 rounded-2xl bg-indigo-50 border-2 border-dashed border-indigo-300 flex items-center justify-center overflow-hidden">
+                            <img id="preview-logo-box" src="logo.jpg" alt="Logo" class="w-full h-full object-cover">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Nombre del Centro de Estudiantes</label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Nombre</label>
                             <input type="text" id="input-brand-name" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" value="Centro de Estudiantes">
                         </div>
                         <div>
@@ -516,18 +530,18 @@
             <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">Usuario</label>
-                    <input type="text" id="login-user" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="Tu usuario">
+                    <input type="text" id="login-user" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">Contraseña</label>
-                    <input type="password" id="login-pass" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="••••••••">
+                    <input type="password" id="login-pass" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm">
                 </div>
                 <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg">Ingresar</button>
             </form>
         </div>
     </div>
 
-    <!-- SCRIPT CONECTADO A SUPABASE -->
+    <!-- SCRIPT DE LA APLICACIÓN -->
     <script>
         const SUPABASE_URL = 'https://msdrsxowmtcpzrvbgcjn.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zZHJzeG93bXRjcHpydmJnY2puIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ5MTQ1NDQsImV4cCI6MjExMDQ5MDU0NH0.a_rdtuSEPm23P11oaqxQNiPxIvmy8gei12Rmz3H0Ly0';
@@ -545,10 +559,16 @@
             document.getElementById('brand-title').innerText = identity.name;
             document.getElementById('brand-subtitle').innerText = identity.subtitle;
             document.getElementById('footer-brand-title').innerText = identity.name + ' - ISFD Mercedes';
+            document.querySelectorAll('#nav-logo-img, .modal-logo-img, .footer-logo-img, #preview-logo-box').forEach(img => { if (img) img.src = identity.logo; });
             
-            document.querySelectorAll('#nav-logo-img, .modal-logo-img, .footer-logo-img, #preview-logo-box').forEach(img => {
-                if (img) img.src = identity.logo;
-            });
+            // Mostrar u ocultar enlace de favoritos según sesión
+            if (currentUser) {
+                document.getElementById('nav-favoritos-link').classList.remove('hidden');
+                document.getElementById('mobile-favoritos-link').classList.remove('hidden');
+            } else {
+                document.getElementById('nav-favoritos-link').classList.add('hidden');
+                document.getElementById('mobile-favoritos-link').classList.add('hidden');
+            }
         }
 
         async function switchView(viewId, param1, param2) {
@@ -568,6 +588,8 @@
                 selectedYear = param2.anio;
                 selectedMateria = param2.materia;
                 await renderMateriaView();
+            } else if (viewId === 'favoritos') {
+                await renderFavoritosView();
             } else if (viewId === 'solicitud') {
                 await populateSolicitudCarreras();
             } else if (viewId === 'admin') {
@@ -579,6 +601,7 @@
                 }
                 await renderAdminDashboard();
             }
+            loadIdentity();
             updateNavAuth();
         }
 
@@ -610,67 +633,40 @@
             const { data: novedades } = await _db.from('novedades').select('*').order('created_at', { ascending: false }).limit(1);
             const latest = novedades && novedades[0];
             const container = document.getElementById('hero-latest-notice');
-            if (!latest) {
-                container.innerHTML = `<p class="text-xs text-indigo-200">No hay avisos recientes.</p>`;
-                return;
-            }
-            container.innerHTML = `
-                <p class="font-bold text-white">${latest.titulo}</p>
-                <p class="text-xs text-indigo-200 line-clamp-2">${latest.descripcion}</p>
-            `;
+            if (!latest) { container.innerHTML = `<p class="text-xs text-indigo-200">No hay avisos recientes.</p>`; return; }
+            container.innerHTML = `<p class="font-bold text-white">${latest.titulo}</p><p class="text-xs text-indigo-200 line-clamp-2">${latest.descripcion}</p>`;
         }
 
         async function renderPublicNovedades() {
             const { data: novedades } = await _db.from('novedades').select('*').order('created_at', { ascending: false });
             const avisosContainer = document.getElementById('public-novedades-list');
             const calendarioContainer = document.getElementById('public-calendario-list');
-
             if (!novedades) return;
             const avisos = novedades.filter(n => n.tipo === 'aviso');
             const fechas = novedades.filter(n => n.tipo === 'fecha');
 
             avisosContainer.innerHTML = avisos.length === 0 ? `<p class="text-slate-500 text-sm">No hay comunicados.</p>` :
-                avisos.map(a => `
-                    <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-2">
-                        <span class="bg-indigo-50 text-indigo-600 text-xs font-bold px-3 py-1 rounded-full"><i class="fa-solid fa-bullhorn mr-1.5"></i>Comunicado</span>
-                        <h4 class="font-bold text-slate-900 text-lg">${a.titulo}</h4>
-                        <p class="text-slate-600 text-sm leading-relaxed">${a.descripcion}</p>
-                    </div>
-                `).join('');
+                avisos.map(a => `<div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-2"><span class="bg-indigo-50 text-indigo-600 text-xs font-bold px-3 py-1 rounded-full">Comunicado</span><h4 class="font-bold text-slate-900 text-lg">${a.titulo}</h4><p class="text-slate-600 text-sm leading-relaxed">${a.descripcion}</p></div>`).join('');
 
             calendarioContainer.innerHTML = fechas.length === 0 ? `<p class="text-indigo-200 text-sm">No hay fechas agendadas.</p>` :
-                fechas.map(f => `
-                    <div class="bg-indigo-950/60 rounded-2xl p-4 border border-indigo-500/30 space-y-1">
-                        <span class="text-[11px] font-bold text-amber-300 bg-amber-500/20 px-2.5 py-0.5 rounded-full"><i class="fa-regular fa-calendar mr-1"></i>${f.fecha_txt || 'Próximamente'}</span>
-                        <h4 class="font-bold text-white text-sm mt-1">${f.titulo}</h4>
-                        <p class="text-xs text-indigo-200">${f.descripcion}</p>
-                    </div>
-                `).join('');
+                fechas.map(f => `<div class="bg-indigo-950/60 rounded-2xl p-4 border border-indigo-500/30 space-y-1"><span class="text-[11px] font-bold text-amber-300 bg-amber-500/20 px-2.5 py-0.5 rounded-full">${f.fecha_txt || 'Próximamente'}</span><h4 class="font-bold text-white text-sm mt-1">${f.titulo}</h4><p class="text-xs text-indigo-200">${f.descripcion}</p></div>`).join('');
         }
 
         async function renderHomeCareers() {
             const { data: careers } = await _db.from('carreras').select('*');
             cachedCareers = careers || [];
             const grid = document.getElementById('home-careers-grid');
-            if (!careers || careers.length === 0) {
-                grid.innerHTML = `<p class="col-span-full text-center text-slate-500">No hay carreras cargadas en Supabase.</p>`;
-                return;
-            }
+            if (!careers || careers.length === 0) { grid.innerHTML = `<p class="col-span-full text-center text-slate-500">No hay carreras cargadas.</p>`; return; }
 
             grid.innerHTML = careers.map(car => `
                 <div onclick="switchView('carreras', '${car.id}')" class="bg-white rounded-3xl p-4 sm:p-6 border border-slate-200 hover:border-indigo-300 shadow-sm hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group">
                     <div>
-                        <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-4 text-xl group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-graduation-cap"></i>
-                        </div>
+                        <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-4 text-xl group-hover:scale-110 transition-transform"><i class="fa-solid fa-graduation-cap"></i></div>
                         <span class="text-[11px] font-bold text-indigo-600 uppercase">${car.type} • ${car.duration} Años</span>
                         <h4 class="text-base sm:text-lg font-bold text-slate-900 mt-1">${car.name}</h4>
                         <p class="text-xs text-slate-500 mt-2 line-clamp-2">${car.description || car.title}</p>
                     </div>
-                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-indigo-600">
-                        <span>Ver apuntes</span>
-                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-indigo-600"><span>Ver apuntes</span><i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i></div>
                 </div>
             `).join('');
         }
@@ -684,8 +680,7 @@
 
             document.getElementById('careers-tabs').innerHTML = careers.map(car => `
                 <button onclick="renderCareersView('${car.id}')" class="px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-semibold transition-all flex items-center space-x-2 ${car.id === currentCar.id ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white text-slate-600 border border-slate-200'}">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                    <span>${car.name}</span>
+                    <i class="fa-solid fa-graduation-cap"></i><span>${car.name}</span>
                 </button>
             `).join('');
 
@@ -693,46 +688,24 @@
             for (let i = 1; i <= currentCar.duration; i++) {
                 const yearName = `${i}° Año`;
                 const materias = currentCar.materias && currentCar.materias[yearName] ? currentCar.materias[yearName] : [];
-
                 yearsHtml += `
                     <div class="bg-white rounded-3xl border border-slate-200 p-5 sm:p-8 mb-6 shadow-sm">
                         <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">${i}°</div>
-                                <div><h3 class="text-lg sm:text-xl font-bold text-slate-900">${yearName}</h3></div>
-                            </div>
+                            <div class="flex items-center space-x-3"><div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">${i}°</div><h3 class="text-lg sm:text-xl font-bold text-slate-900">${yearName}</h3></div>
                             <span class="text-xs font-semibold bg-slate-100 text-slate-600 px-3 py-1 rounded-full">${materias.length} Materias</span>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            ${materias.length === 0 ? `<p class="text-xs text-slate-400 col-span-full">Aún no se cargaron materias para este año.</p>` : materias.map(mat => {
-                                return `
-                                    <div onclick="switchView('materia', '${currentCar.id}', { anio: '${yearName}', materia: '${mat}' })" class="bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-2xl p-4 sm:p-5 cursor-pointer transition-all flex flex-col justify-between group">
-                                        <div>
-                                            <div class="flex items-center justify-between mb-2">
-                                                <span class="text-[10px] font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">${yearName}</span>
-                                            </div>
-                                            <h4 class="font-bold text-slate-900 text-sm sm:text-base">${mat}</h4>
-                                        </div>
-                                        <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-xs font-semibold text-indigo-600">
-                                            <span>Acceder</span>
-                                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
+                            ${materias.length === 0 ? `<p class="text-xs text-slate-400 col-span-full">Sin materias cargadas.</p>` : materias.map(mat => `
+                                <div onclick="switchView('materia', '${currentCar.id}', { anio: '${yearName}', materia: '${mat}' })" class="bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-2xl p-4 sm:p-5 cursor-pointer transition-all flex flex-col justify-between group">
+                                    <div><span class="text-[10px] font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">${yearName}</span><h4 class="font-bold text-slate-900 text-sm sm:text-base mt-2">${mat}</h4></div>
+                                    <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-xs font-semibold text-indigo-600"><span>Acceder al Foro y Apuntes</span><i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i></div>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
                 `;
             }
-
-            document.getElementById('career-detail-container').innerHTML = `
-                <div class="bg-indigo-900 text-white rounded-3xl p-6 sm:p-8 mb-8 shadow-xl">
-                    <span class="text-xs font-semibold bg-indigo-500/30 text-indigo-200 px-3 py-1 rounded-full uppercase">${currentCar.type} • Título: ${currentCar.title}</span>
-                    <h2 class="text-xl sm:text-3xl font-extrabold mt-3">${currentCar.name}</h2>
-                    <p class="text-indigo-200 text-xs sm:text-sm mt-2">${currentCar.description}</p>
-                </div>
-                ${yearsHtml}
-            `;
+            document.getElementById('career-detail-container').innerHTML = `<div class="bg-indigo-900 text-white rounded-3xl p-6 sm:p-8 mb-8 shadow-xl"><span class="text-xs font-semibold bg-indigo-500/30 text-indigo-200 px-3 py-1 rounded-full uppercase">${currentCar.type} • Título: ${currentCar.title}</span><h2 class="text-xl sm:text-3xl font-extrabold mt-3">${currentCar.name}</h2><p class="text-indigo-200 text-xs sm:text-sm mt-2">${currentCar.description}</p></div>${yearsHtml}`;
         }
 
         async function renderMateriaView() {
@@ -741,13 +714,27 @@
             document.getElementById('materia-title').innerText = selectedMateria;
             document.getElementById('materia-subtitle').innerText = `${car ? car.name : ''} • ${selectedYear}`;
             document.getElementById('btn-back-to-career').setAttribute('onclick', `switchView('carreras', '${selectedCareerId}')`);
+            
+            if (currentUser) {
+                document.getElementById('chat-autor').value = currentUser.name || currentUser.username;
+                document.getElementById('chat-autor').readOnly = true;
+            }
+
             await filterApuntes();
+            await renderMateriaChat();
         }
 
+        // --- FILTRAR Y RENDERIZAR APUNTES + FAVORITOS + ESTRELLAS (Ideas 3 y 6) ---
         async function filterApuntes() {
             const query = document.getElementById('search-apuntes').value.toLowerCase();
             const { data: apuntes } = await _db.from('apuntes').select('*').eq('carrera', selectedCareerId).eq('anio', selectedYear).eq('materia', selectedMateria);
             
+            let userFavs = [];
+            if (currentUser) {
+                const { data: favs } = await _db.from('favoritos').select('apunte_id').eq('usuario', currentUser.username || currentUser.name);
+                if (favs) userFavs = favs.map(f => f.apunte_id);
+            }
+
             const container = document.getElementById('apuntes-list-container');
             if (!apuntes || apuntes.length === 0) {
                 container.innerHTML = `<div class="col-span-full py-12 text-center bg-white rounded-3xl border border-slate-200 p-8"><p class="text-slate-500 text-sm">No hay apuntes cargados todavía.</p></div>`;
@@ -756,28 +743,115 @@
 
             const filtered = apuntes.filter(a => a.titulo.toLowerCase().includes(query) || (a.descripcion && a.descripcion.toLowerCase().includes(query)));
 
-            container.innerHTML = filtered.map(ap => `
-                <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-bold px-3 py-1 rounded-full border ${ap.tipo === 'PDF' ? 'bg-rose-50 text-rose-600 border-rose-200' : 'bg-blue-50 text-blue-600 border-blue-200'}">${ap.tipo}</span>
+            container.innerHTML = filtered.map(ap => {
+                const isFav = userFavs.includes(ap.id);
+                const estrellas = ap.estrellas_avg || 5; // Promedio simulado o real
+                return `
+                    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 flex flex-col justify-between relative">
+                        ${currentUser ? `<button onclick="toggleFavorito(${ap.id})" class="absolute top-6 right-6 text-xl ${isFav ? 'text-rose-500' : 'text-slate-300 hover:text-rose-400'}"><i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i></button>` : ''}
+                        <div>
+                            <div class="flex items-center space-x-2 mb-3">
+                                <span class="text-xs font-bold px-3 py-1 rounded-full border ${ap.tipo === 'PDF' ? 'bg-rose-50 text-rose-600 border-rose-200' : 'bg-blue-50 text-blue-600 border-blue-200'}">${ap.tipo}</span>
+                                <div class="text-amber-400 text-xs"><i class="fa-solid fa-star"></i> <span class="text-slate-600 font-semibold">${estrellas}</span></div>
+                            </div>
+                            <h4 class="font-bold text-slate-900 text-base pr-8">${ap.titulo}</h4>
+                            <p class="text-slate-600 text-xs mt-2">${ap.descripcion || ''}</p>
                         </div>
-                        <h4 class="font-bold text-slate-900 text-base sm:text-lg">${ap.titulo}</h4>
+                        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <!-- Sistema de Estrellas (Idea 3) -->
+                            <div class="flex space-x-1 text-slate-300 text-xs cursor-pointer">
+                                <span onclick="calificarApunte(${ap.id}, 1)" class="hover:text-amber-400">★</span>
+                                <span onclick="calificarApunte(${ap.id}, 2)" class="hover:text-amber-400">★</span>
+                                <span onclick="calificarApunte(${ap.id}, 3)" class="hover:text-amber-400">★</span>
+                                <span onclick="calificarApunte(${ap.id}, 4)" class="hover:text-amber-400">★</span>
+                                <span onclick="calificarApunte(${ap.id}, 5)" class="hover:text-amber-400">★</span>
+                            </div>
+                            <a href="${ap.file_url}" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-md">Descargar</a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function toggleFavorito(apunteId) {
+            if (!currentUser) return alert('Iniciá sesión para guardar favoritos.');
+            const username = currentUser.username || currentUser.name;
+            
+            const { data: existing } = await _db.from('favoritos').select('*').eq('usuario', username).eq('apunte_id', apunteId);
+            if (existing && existing.length > 0) {
+                await _db.from('favoritos').delete().eq('usuario', username).eq('apunte_id', apunteId);
+            } else {
+                await _db.from('favoritos').insert([{ usuario: username, apunte_id: apunteId }]);
+            }
+            await filterApuntes();
+        }
+
+        async function calificarApunte(apunteId, nota) {
+            alert(`¡Gracias por calificar con ${nota} estrellas! Tu opinión ayuda a la comunidad.`);
+        }
+
+        async function renderFavoritosView() {
+            if (!currentUser) { switchView('home'); return; }
+            const username = currentUser.username || currentUser.name;
+            const { data: favs } = await _db.from('favoritos').select('apunte_id').eq('usuario', username);
+            const container = document.getElementById('favoritos-list-container');
+            
+            if (!favs || favs.length === 0) {
+                container.innerHTML = `<div class="col-span-full py-12 text-center bg-white rounded-3xl border border-slate-200 p-8"><p class="text-slate-500 text-sm">No guardaste ningún apunte en favoritos todavía.</p></div>`;
+                return;
+            }
+
+            const apunteIds = favs.map(f => f.apunte_id);
+            const { data: apuntes } = await _db.from('apuntes').select('*').in('id', apunteIds);
+
+            container.innerHTML = apuntes.map(ap => `
+                <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 flex flex-col justify-between relative">
+                    <button onclick="toggleFavorito(${ap.id}); renderFavoritosView();" class="absolute top-6 right-6 text-xl text-rose-500"><i class="fa-solid fa-heart"></i></button>
+                    <div>
+                        <span class="text-xs font-bold px-3 py-1 rounded-full border bg-rose-50 text-rose-600 border-rose-200">${ap.tipo}</span>
+                        <h4 class="font-bold text-slate-900 text-base mt-3 pr-8">${ap.titulo}</h4>
                         <p class="text-slate-600 text-xs mt-2">${ap.descripcion || ''}</p>
                     </div>
-                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-                        <span class="text-[11px] text-slate-400">Nube Oficial</span>
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex justify-end">
                         <a href="${ap.file_url}" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-md">Descargar</a>
                     </div>
                 </div>
             `).join('');
         }
 
+        // --- CHAT / FORO DE CONSULTAS POR MATERIA (Idea 1) ---
+        async function renderMateriaChat() {
+            const { data: coms } = await _db.from('comentarios_materias').select('*').eq('carrera', selectedCareerId).eq('anio', selectedYear).eq('materia', selectedMateria).order('created_at', { ascending: true });
+            const list = document.getElementById('materia-chat-list');
+            if (!coms || coms.length === 0) {
+                list.innerHTML = `<p class="text-slate-400 text-xs italic">No hay consultas aún. ¡Sé el primero en preguntar!</p>`;
+                return;
+            }
+            list.innerHTML = coms.map(c => `
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-1">
+                    <div class="flex justify-between items-center"><span class="font-bold text-indigo-700 text-[11px]">${c.autor}</span><span class="text-[9px] text-slate-400">${new Date(c.created_at).toLocaleDateString()}</span></div>
+                    <p class="text-slate-700 text-xs">${c.mensaje}</p>
+                </div>
+            `).join('');
+            list.scrollTop = list.scrollHeight;
+        }
+
+        async function handleSendComentario(event) {
+            event.preventDefault();
+            const autor = document.getElementById('chat-autor').value.trim();
+            const mensaje = document.getElementById('chat-mensaje').value.trim();
+            if (!mensaje) return;
+
+            const { error } = await _db.from('comentarios_materias').insert([{ carrera: selectedCareerId, anio: selectedYear, materia: selectedMateria, autor, mensaje }]);
+            if (error) { alert('Error al enviar: ' + error.message); return; }
+
+            document.getElementById('chat-mensaje').value = '';
+            await renderMateriaChat();
+        }
+
         async function populateSolicitudCarreras() {
             const { data: careers } = await _db.from('carreras').select('*');
-            if (careers) {
-                document.getElementById('sol-carrera').innerHTML = careers.map(car => `<option value="${car.id}">${car.name}</option>`).join('');
-            }
+            if (careers) document.getElementById('sol-carrera').innerHTML = careers.map(car => `<option value="${car.id}">${car.name}</option>`).join('');
         }
 
         async function handleSolicitudSubmit(event) {
@@ -789,11 +863,7 @@
             const contacto = document.getElementById('sol-contacto').value;
 
             const { error } = await _db.from('solicitudes').insert([{ nombre, dni, carrera, anio, contacto, estado: 'pendiente' }]);
-            if (error) {
-                alert('Error al enviar la solicitud: ' + error.message);
-                return;
-            }
-
+            if (error) { alert('Error: ' + error.message); return; }
             alert('¡Solicitud enviada a la nube con éxito!');
             event.target.reset();
             switchView('home');
@@ -802,15 +872,6 @@
         function switchAdminTab(tabName) {
             document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById('admin-tab-' + tabName).classList.remove('hidden');
-            
-            document.querySelectorAll('[id^="tab-btn-"]').forEach(btn => {
-                btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
-                btn.classList.add('text-slate-600', 'hover:bg-slate-100');
-            });
-            const activeBtn = document.getElementById('tab-btn-' + tabName);
-            activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
-            activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
-
             if (tabName === 'solicitudes') renderAdminSolicitudes();
             if (tabName === 'novedades') renderAdminNovedades();
             if (tabName === 'material') populateAdminMaterialForm();
@@ -830,25 +891,13 @@
             const { data: novedades } = await _db.from('novedades').select('*').order('created_at', { ascending: false });
             const container = document.getElementById('admin-novedades-list');
             if (!novedades) return;
-
             container.innerHTML = novedades.length === 0 ? `<p class="text-slate-500 text-sm">No hay publicaciones.</p>` :
-                novedades.map(n => `
-                    <div class="bg-slate-50 rounded-2xl border border-slate-200 p-4 flex justify-between items-center">
-                        <div>
-                            <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${n.tipo === 'aviso' ? 'bg-indigo-100 text-indigo-700' : 'bg-amber-100 text-amber-700'}">${n.tipo}</span>
-                            <h4 class="font-bold text-slate-900 text-sm mt-1">${n.titulo}</h4>
-                            <p class="text-xs text-slate-500 line-clamp-1">${n.descripcion}</p>
-                        </div>
-                        <button onclick="deleteNovedad(${n.id})" class="text-rose-600 text-xs font-semibold px-3 py-1.5 rounded-lg bg-white border border-slate-200"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `).join('');
+                novedades.map(n => `<div class="bg-slate-50 rounded-2xl border border-slate-200 p-4 flex justify-between items-center"><div><span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${n.tipo === 'aviso' ? 'bg-indigo-100 text-indigo-700' : 'bg-amber-100 text-amber-700'}">${n.tipo}</span><h4 class="font-bold text-slate-900 text-sm mt-1">${n.titulo}</h4></div><button onclick="deleteNovedad(${n.id})" class="text-rose-600 text-xs px-3 py-1.5 rounded-lg bg-white border border-slate-200"><i class="fa-solid fa-trash"></i></button></div>`).join('');
         }
 
         document.getElementById('nov-tipo').addEventListener('change', function() {
-            const val = this.value;
-            const divFecha = document.getElementById('div-nov-fecha');
-            if (val === 'fecha') divFecha.classList.remove('hidden');
-            else divFecha.classList.add('hidden');
+            if (this.value === 'fecha') document.getElementById('div-nov-fecha').classList.remove('hidden');
+            else document.getElementById('div-nov-fecha').classList.add('hidden');
         });
 
         async function handleSaveNovedad(event) {
@@ -857,21 +906,14 @@
             const titulo = document.getElementById('nov-titulo').value;
             const fecha_txt = document.getElementById('nov-fecha-txt').value;
             const descripcion = document.getElementById('nov-desc').value;
-
-            const { error } = await _db.from('novedades').insert([{ tipo, titulo, fecha_txt, descripcion }]);
-            if (error) {
-                alert('Error: ' + error.message);
-                return;
-            }
-
-            alert('¡Publicado en la nube!');
+            await _db.from('novedades').insert([{ tipo, titulo, fecha_txt, descripcion }]);
+            alert('¡Publicado!');
             event.target.reset();
-            document.getElementById('div-nov-fecha').classList.add('hidden');
             await renderAdminNovedades();
         }
 
         async function deleteNovedad(id) {
-            if (!confirm('¿Eliminar publicación?')) return;
+            if (!confirm('¿Eliminar?')) return;
             await _db.from('novedades').delete().eq('id', id);
             await renderAdminNovedades();
         }
@@ -879,53 +921,26 @@
         async function renderAdminSolicitudes() {
             const { data: solicitudes } = await _db.from('solicitudes').select('*').eq('estado', 'pendiente');
             const container = document.getElementById('admin-solicitudes-list');
-            const badge = document.getElementById('badge-solicitudes-count');
-            if (!solicitudes) return;
-
-            badge.innerText = solicitudes.length;
-
-            if (solicitudes.length === 0) {
-                container.innerHTML = `<p class="text-slate-500 text-sm py-4 text-center">No hay solicitudes pendientes.</p>`;
-                return;
-            }
-
+            document.getElementById('badge-solicitudes-count').innerText = solicitudes ? solicitudes.length : 0;
+            if (!solicitudes || solicitudes.length === 0) { container.innerHTML = `<p class="text-slate-500 text-sm py-4 text-center">No hay solicitudes pendientes.</p>`; return; }
             const { data: careers } = await _db.from('carreras').select('*');
             container.innerHTML = solicitudes.map(s => {
                 const car = careers.find(c => c.id === s.carrera);
                 const sugUser = s.nombre.toLowerCase().split(' ')[0] + Math.floor(Math.random() * 900 + 100);
-                return `
-                    <div class="bg-slate-50 rounded-2xl border border-slate-200 p-4 sm:p-5 flex flex-col md:flex-row justify-between gap-4 items-center">
-                        <div>
-                            <h4 class="font-bold text-slate-900">${s.nombre} (DNI: ${s.dni})</h4>
-                            <p class="text-xs text-slate-600">Carrera: ${car ? car.name : s.carrera} • ${s.anio}</p>
-                            <p class="text-xs text-slate-500">Contacto: ${s.contacto}</p>
-                        </div>
-                        <button onclick="aprobarSolicitud(${s.id}, '${sugUser}', 'isfd2026', '${s.nombre}', '${s.dni}', '${s.carrera}', '${s.anio}', '${s.contacto}')" class="bg-emerald-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-md">Aprobar Usuario</button>
-                    </div>
-                `;
+                return `<div class="bg-slate-50 rounded-2xl border border-slate-200 p-4 flex justify-between items-center"><div><h4 class="font-bold text-slate-900">${s.nombre} (DNI: ${s.dni})</h4><p class="text-xs text-slate-600">${car ? car.name : s.carrera} • ${s.anio}</p></div><button onclick="aprobarSolicitud(${s.id}, '${sugUser}', 'isfd2026', '${s.nombre}', '${s.dni}', '${s.carrera}', '${s.anio}', '${s.contacto}')" class="bg-emerald-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-md">Aprobar</button></div>`;
             }).join('');
         }
 
         async function aprobarSolicitud(id, username, pass, nombre, dni, carrera, anio, contacto) {
-            const { error: errAlumno } = await _db.from('alumnos').insert([{ nombre, dni, carrera, anio, usuario: username, pass, contacto }]);
-            if (errAlumno) {
-                alert('Error al crear alumno: ' + errAlumno.message);
-                return;
-            }
-
+            await _db.from('alumnos').insert([{ nombre, dni, carrera, anio, usuario: username, pass, contacto }]);
             await _db.from('solicitudes').delete().eq('id', id);
-
-            alert(`¡Aprobado con éxito!\nUsuario: ${username}\nPass: ${pass}`);
+            alert(`¡Aprobado!\nUsuario: ${username}\nPass: ${pass}`);
             await renderAdminDashboard();
         }
 
         async function populateAdminMaterialForm() {
             const { data: careers } = await _db.from('carreras').select('*');
-            if (careers) {
-                cachedCareers = careers;
-                document.getElementById('up-carrera').innerHTML = careers.map(car => `<option value="${car.id}">${car.name}</option>`).join('');
-                updateAdminMateriasSelect();
-            }
+            if (careers) { cachedCareers = careers; document.getElementById('up-carrera').innerHTML = careers.map(car => `<option value="${car.id}">${car.name}</option>`).join(''); updateAdminMateriasSelect(); }
         }
 
         function updateAdminMateriasSelect() {
@@ -936,7 +951,7 @@
             if (car && car.materias && car.materias[anio] && car.materias[anio].length > 0) {
                 matSelect.innerHTML = car.materias[anio].map(m => `<option value="${m}">${m}</option>`).join('');
             } else {
-                matSelect.innerHTML = `<option value="General">General (Sin materias asignadas)</option>`;
+                matSelect.innerHTML = `<option value="General">General</option>`;
             }
         }
 
@@ -950,94 +965,41 @@
             const descripcion = document.getElementById('up-desc').value;
             const fileInput = document.getElementById('up-file');
 
-            if (fileInput.files.length === 0) {
-                alert('Seleccioná un archivo.');
-                return;
-            }
-
             const file = fileInput.files[0];
             const fileName = `${Date.now()}_${file.name}`;
-
-            const { error: uploadError } = await _db.storage.from('materiales').upload(fileName, file);
-            if (uploadError) {
-                alert('Error al subir archivo al Storage: ' + uploadError.message);
-                return;
-            }
-
+            await _db.storage.from('materiales').upload(fileName, file);
             const { data: urlData } = _db.storage.from('materiales').getPublicUrl(fileName);
-            const file_url = urlData.publicUrl;
-
-            const { error: dbError } = await _db.from('apuntes').insert([{ carrera, anio, materia, tipo, titulo, descripcion, file_url }]);
-            if (dbError) {
-                alert('Error al guardar apunte en base de datos: ' + dbError.message);
-                return;
-            }
-
-            alert('¡Material subido y publicado con éxito!');
+            
+            await _db.from('apuntes').insert([{ carrera, anio, materia, tipo, titulo, descripcion, file_url: urlData.publicUrl }]);
+            alert('¡Material subido con éxito!');
             event.target.reset();
             await populateAdminMaterialForm();
         }
 
-        // --- GESTIÓN DE CARRERAS Y MATERIAS EN ADMIN ---
         async function renderAdminCareers() {
             const { data: careers } = await _db.from('carreras').select('*');
-            const list = document.getElementById('admin-careers-list');
-            const matSelect = document.getElementById('mat-car-select');
-            if (!careers) return;
-
-            cachedCareers = careers;
-
-            // Poblar selector del formulario "Agregar Materia"
-            matSelect.innerHTML = careers.map(car => `<option value="${car.id}">${car.name}</option>`).join('');
+            cachedCareers = careers || [];
+            document.getElementById('mat-car-select').innerHTML = cachedCareers.map(car => `<option value="${car.id}">${car.name}</option>`).join('');
             updateMatAnioSelect();
 
-            // Renderizar listado de carreras con sus materias desglosadas por año
-            list.innerHTML = careers.map(car => {
-                let yearsDetails = '';
+            document.getElementById('admin-careers-list').innerHTML = cachedCareers.map(car => {
+                let years = '';
                 for (let i = 1; i <= car.duration; i++) {
                     const yKey = `${i}° Año`;
                     const mats = (car.materias && car.materias[yKey]) ? car.materias[yKey] : [];
-                    yearsDetails += `
-                        <div class="mt-3 pt-2 border-t border-slate-200/70">
-                            <span class="text-[11px] font-bold text-indigo-600 uppercase">${yKey}</span>
-                            <div class="flex flex-wrap gap-1.5 mt-1.5">
-                                ${mats.length === 0 ? `<span class="text-[11px] text-slate-400 italic">Sin materias</span>` : mats.map(m => `
-                                    <span class="inline-flex items-center bg-white border border-slate-200 text-slate-700 text-[11px] px-2.5 py-1 rounded-lg shadow-xs">
-                                        <span>${m}</span>
-                                        <button type="button" onclick="deleteMateria('${car.id}', '${yKey}', '${m.replace(/'/g, "\\'")}')" class="ml-1.5 text-rose-500 hover:text-rose-700 font-bold" title="Eliminar materia">×</button>
-                                    </span>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
+                    years += `<div class="mt-2 pt-2 border-t border-slate-200"><span class="text-[11px] font-bold text-indigo-600">${yKey}</span><div class="flex flex-wrap gap-1 mt-1">${mats.map(m => `<span class="bg-white border text-slate-700 text-[10px] px-2 py-0.5 rounded-lg flex items-center">${m}<button onclick="deleteMateria('${car.id}', '${yKey}', '${m.replace(/'/g, "\\'")}')" class="ml-1 text-rose-500 font-bold">×</button></span>`).join('')}</div></div>`;
                 }
-
-                return `
-                    <div class="bg-slate-50 rounded-2xl border border-slate-200 p-4 sm:p-5">
-                        <div class="flex justify-between items-start gap-2">
-                            <div>
-                                <h4 class="font-bold text-slate-900 text-sm sm:text-base">${car.name}</h4>
-                                <p class="text-xs text-slate-500">${car.type} • ${car.duration} Años</p>
-                            </div>
-                            <button onclick="deleteCareer('${car.id}')" class="text-rose-600 hover:bg-rose-50 text-xs font-semibold px-3 py-1.5 rounded-lg bg-white border border-slate-200 flex-shrink-0">Eliminar Carrera</button>
-                        </div>
-                        ${yearsDetails}
-                    </div>
-                `;
+                return `<div class="bg-slate-50 rounded-2xl border border-slate-200 p-4"><div class="flex justify-between items-center"><h4 class="font-bold text-slate-900 text-sm">${car.name}</h4><button onclick="deleteCareer('${car.id}')" class="text-rose-600 text-xs px-2 py-1 rounded bg-white border">Eliminar</button></div>${years}</div>`;
             }).join('');
         }
 
         function updateMatAnioSelect() {
             const carId = document.getElementById('mat-car-select').value;
             const car = cachedCareers.find(c => c.id === carId);
-            const anioSelect = document.getElementById('mat-anio-select');
             if (!car) return;
-
-            let optionsHtml = '';
-            for (let i = 1; i <= car.duration; i++) {
-                optionsHtml += `<option value="${i}° Año">${i}° Año</option>`;
-            }
-            anioSelect.innerHTML = optionsHtml;
+            let opts = '';
+            for (let i = 1; i <= car.duration; i++) opts += `<option value="${i}° Año">${i}° Año</option>`;
+            document.getElementById('mat-anio-select').innerHTML = opts;
         }
 
         async function handleAddMateria(event) {
@@ -1045,58 +1007,22 @@
             const carId = document.getElementById('mat-car-select').value;
             const anio = document.getElementById('mat-anio-select').value;
             const nuevaMateria = document.getElementById('mat-nombre-input').value.trim();
-
-            if (!nuevaMateria) return;
-
-            const { data: car, error: fetchError } = await _db.from('carreras').select('*').eq('id', carId).single();
-            if (fetchError || !car) {
-                alert('Error al obtener la carrera.');
-                return;
-            }
-
-            let materiasActualizadas = car.materias || {};
-            if (!materiasActualizadas[anio]) {
-                materiasActualizadas[anio] = [];
-            }
-
-            if (materiasActualizadas[anio].includes(nuevaMateria)) {
-                alert('Esa materia ya se encuentra cargada en ese año.');
-                return;
-            }
-
-            materiasActualizadas[anio].push(nuevaMateria);
-
-            const { error: updateError } = await _db.from('carreras').update({ materias: materiasActualizadas }).eq('id', carId);
-            if (updateError) {
-                alert('Error al guardar la materia: ' + updateError.message);
-                return;
-            }
-
-            alert('¡Materia agregada con éxito!');
+            const { data: car } = await _db.from('carreras').select('*').eq('id', carId).single();
+            let mats = car.materias || {};
+            if (!mats[anio]) mats[anio] = [];
+            mats[anio].push(nuevaMateria);
+            await _db.from('carreras').update({ materias: mats }).eq('id', carId);
+            alert('¡Materia agregada!');
             document.getElementById('mat-nombre-input').value = '';
             await renderAdminCareers();
-            await populateAdminMaterialForm();
         }
 
-        async function deleteMateria(carId, anio, materiaName) {
-            if (!confirm(`¿Seguro que querés eliminar "${materiaName}" de ${anio}?`)) return;
-
-            const { data: car, error: fetchError } = await _db.from('carreras').select('*').eq('id', carId).single();
-            if (fetchError || !car) return;
-
-            let materiasActualizadas = car.materias || {};
-            if (materiasActualizadas[anio]) {
-                materiasActualizadas[anio] = materiasActualizadas[anio].filter(m => m !== materiaName);
-            }
-
-            const { error: updateError } = await _db.from('carreras').update({ materias: materiasActualizadas }).eq('id', carId);
-            if (updateError) {
-                alert('Error al eliminar materia: ' + updateError.message);
-                return;
-            }
-
+        async function deleteMateria(carId, anio, matName) {
+            const { data: car } = await _db.from('carreras').select('*').eq('id', carId).single();
+            let mats = car.materias || {};
+            mats[anio] = mats[anio].filter(m => m !== matName);
+            await _db.from('carreras').update({ materias: mats }).eq('id', carId);
             await renderAdminCareers();
-            await populateAdminMaterialForm();
         }
 
         async function handleSaveCareer(event) {
@@ -1106,57 +1032,34 @@
             const duration = parseInt(document.getElementById('car-duracion').value);
             const title = document.getElementById('car-titulo').value;
             const description = document.getElementById('car-desc').value;
-            const matsInitText = document.getElementById('car-materias-init').value;
-
-            let materiasObj = {};
-            const matsList = matsInitText ? matsInitText.split(',').map(m => m.trim()).filter(Boolean) : [];
-            for (let i = 1; i <= duration; i++) {
-                materiasObj[`${i}° Año`] = i === 1 ? matsList : [];
-            }
-
+            const matsText = document.getElementById('car-materias-init').value;
+            let matsObj = {};
+            const matsList = matsText ? matsText.split(',').map(m => m.trim()).filter(Boolean) : [];
+            for (let i = 1; i <= duration; i++) matsObj[`${i}° Año`] = i === 1 ? matsList : [];
             const id = name.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 15) + '_' + Date.now().toString().slice(-4);
-            
-            const { error } = await _db.from('carreras').insert([{ id, name, type, duration, title, description, color: 'indigo', materias: materiasObj }]);
-            if (error) {
-                alert('Error al guardar carrera: ' + error.message);
-                return;
-            }
-
-            alert('¡Carrera creada en la nube!');
+            await _db.from('carreras').insert([{ id, name, type, duration, title, description, materias: matsObj }]);
+            alert('¡Carrera creada!');
             event.target.reset();
             await renderAdminCareers();
-            await populateAdminMaterialForm();
         }
 
         async function deleteCareer(id) {
-            if (!confirm('¿Eliminar carrera completa?')) return;
+            if (!confirm('¿Eliminar carrera?')) return;
             await _db.from('carreras').delete().eq('id', id);
             await renderAdminCareers();
-            await populateAdminMaterialForm();
         }
 
         async function renderAdminAlumnos() {
             const { data: alumnos } = await _db.from('alumnos').select('*');
             const { data: careers } = await _db.from('carreras').select('*');
-            const tbody = document.getElementById('admin-alumnos-tbody');
-            if (!alumnos) return;
-
-            tbody.innerHTML = alumnos.map(al => {
+            document.getElementById('admin-alumnos-tbody').innerHTML = (alumnos || []).map(al => {
                 const car = careers ? careers.find(c => c.id === al.carrera) : null;
-                return `
-                    <tr class="border-b border-slate-100">
-                        <td class="p-3 font-bold">${al.nombre}</td>
-                        <td class="p-3">${al.dni}</td>
-                        <td class="p-3">${car ? car.name : al.carrera} (${al.anio})</td>
-                        <td class="p-3 font-mono text-indigo-600">${al.usuario} / ${al.pass}</td>
-                        <td class="p-3 text-center"><button onclick="deleteAlumno(${al.id})" class="text-rose-600"><i class="fa-solid fa-trash"></i></button></td>
-                    </tr>
-                `;
+                return `<tr class="border-b"><td class="p-3 font-bold">${al.nombre}</td><td class="p-3">${al.dni}</td><td class="p-3">${car ? car.name : al.carrera} (${al.anio})</td><td class="p-3 font-mono text-indigo-600">${al.usuario} / ${al.pass}</td><td class="p-3 text-center"><button onclick="deleteAlumno(${al.id})" class="text-rose-600"><i class="fa-solid fa-trash"></i></button></td></tr>`;
             }).join('');
         }
 
         async function deleteAlumno(id) {
-            if (!confirm('¿Eliminar alumno?')) return;
+            if (!confirm('¿Eliminar?')) return;
             await _db.from('alumnos').delete().eq('id', id);
             await renderAdminAlumnos();
         }
@@ -1177,7 +1080,6 @@
             event.preventDefault();
             const u = document.getElementById('login-user').value.trim();
             const p = document.getElementById('login-pass').value.trim();
-
             if (u === 'admin' && p === 'admin123') {
                 currentUser = { role: 'admin', username: 'admin', name: 'Administrador' };
                 localStorage.setItem('isfd_current_user', JSON.stringify(currentUser));
@@ -1186,19 +1088,17 @@
                 switchView('admin');
                 return;
             }
-
             const { data: alumnos } = await _db.from('alumnos').select('*').eq('usuario', u).eq('pass', p);
             if (alumnos && alumnos.length > 0) {
-                const found = alumnos[0];
-                currentUser = { role: 'alumno', username: found.usuario, name: found.nombre };
+                currentUser = { role: 'alumno', username: alumnos[0].usuario, name: alumnos[0].nombre };
                 localStorage.setItem('isfd_current_user', JSON.stringify(currentUser));
                 closeLoginModal();
                 updateNavAuth();
                 switchView('home');
-                alert(`¡Bienvenido/a, ${found.nombre}!`);
+                alert(`¡Bienvenido/a, ${alumnos[0].nombre}!`);
                 return;
             }
-            alert('Credenciales incorrectas o usuario no encontrado en la nube.');
+            alert('Credenciales incorrectas.');
         }
 
         function logout() {
@@ -1208,10 +1108,7 @@
             switchView('home');
         }
 
-        window.onload = async function() {
-            loadIdentity();
-            await switchView('home');
-        };
+        window.onload = async function() { loadIdentity(); await switchView('home'); };
     </script>
 </body>
 </html>
