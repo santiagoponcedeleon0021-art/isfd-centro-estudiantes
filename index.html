@@ -233,22 +233,22 @@
             </div>
         </section>
 
-        <!-- VISTA: SOLICITUD DE USUARIO -->
+        <!-- VISTA: SOLICITUD DE USUARIO (CON WHATSAPP) -->
         <section id="view-solicitud" class="view-section hidden max-w-3xl mx-auto px-4 py-10">
             <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-6 sm:p-10">
                 <div class="text-center max-w-lg mx-auto mb-8">
                     <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Solicitar Usuario y Contraseña</h2>
-                    <p class="text-slate-600 text-xs sm:text-sm mt-2">Completá tus datos (asegurate de poner un correo válido) para recibir tus credenciales institucionales.</p>
+                    <p class="text-slate-600 text-xs sm:text-sm mt-2">Completá tus datos y te enviaremos tus credenciales directamente a tu WhatsApp.</p>
                 </div>
                 <form id="form-solicitud" onsubmit="handleSolicitudSubmit(event)" class="space-y-4 sm:space-y-6">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                         <div>
                             <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Nombre y Apellido</label>
-                            <input type="text" id="sol-nombre" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm">
+                            <input type="text" id="sol-nombre" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="Ej: Juan Pérez">
                         </div>
                         <div>
                             <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">DNI</label>
-                            <input type="text" id="sol-dni" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm">
+                            <input type="text" id="sol-dni" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="Sin puntos">
                         </div>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
@@ -267,10 +267,14 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Correo Electrónico (Para recibir credenciales)</label>
-                        <input type="email" id="sol-contacto" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="tucorreo@gmail.com">
+                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Número de WhatsApp (Para recibir tus credenciales)</label>
+                        <div class="flex items-center">
+                            <span class="bg-slate-200 border border-r-0 border-slate-300 rounded-l-xl px-3.5 py-3 text-sm font-semibold text-slate-600">+54 9</span>
+                            <input type="tel" id="sol-contacto" required class="w-full bg-slate-50 border border-slate-300 rounded-r-xl px-4 py-3 text-sm" placeholder="Ej: 3773412345 (Sin 0 ni 15)">
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-1"><i class="fa-brands fa-whatsapp text-emerald-600 mr-1"></i>Ingresá tu código de área sin el 0 y tu número sin el 15.</p>
                     </div>
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg text-sm">Enviar Solicitud a la Nube</button>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg text-sm">Enviar Solicitud</button>
                 </form>
             </div>
         </section>
@@ -299,7 +303,7 @@
 
             <div id="admin-tab-solicitudes" class="admin-tab-content space-y-6">
                 <div class="bg-white rounded-2xl border border-slate-200 p-6">
-                    <h3 class="text-lg font-bold text-slate-900 mb-4">Alumnos Pendientes (Al aprobar se abrirá tu correo con el mensaje institucional listo)</h3>
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Alumnos Pendientes (Al aprobar se abrirá WhatsApp con el mensaje listo)</h3>
                     <div id="admin-solicitudes-list" class="space-y-4"><p class="text-slate-500 text-sm">Cargando...</p></div>
                 </div>
             </div>
@@ -465,7 +469,7 @@
                                     <th class="p-3">Nombre</th>
                                     <th class="p-3">DNI</th>
                                     <th class="p-3">Carrera / Año</th>
-                                    <th class="p-3">Usuario / Correo</th>
+                                    <th class="p-3">Usuario / WhatsApp</th>
                                     <th class="p-3 text-center">Acciones</th>
                                 </tr>
                             </thead>
@@ -850,11 +854,11 @@
             const dni = document.getElementById('sol-dni').value;
             const carrera = document.getElementById('sol-carrera').value;
             const anio = document.getElementById('sol-anio').value;
-            const contacto = document.getElementById('sol-contacto').value;
+            const contacto = document.getElementById('sol-contacto').value.trim();
 
             const { error } = await _db.from('solicitudes').insert([{ nombre, dni, carrera, anio, contacto, estado: 'pendiente' }]);
             if (error) { alert('Error: ' + error.message); return; }
-            alert('¡Solicitud enviada a la nube con éxito!');
+            alert('¡Solicitud enviada! Pronto recibirás tus credenciales por WhatsApp.');
             event.target.reset();
             switchView('home');
         }
@@ -862,6 +866,15 @@
         function switchAdminTab(tabName) {
             document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById('admin-tab-' + tabName).classList.remove('hidden');
+            
+            document.querySelectorAll('[id^="tab-btn-"]').forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
+                btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+            });
+            const activeBtn = document.getElementById('tab-btn-' + tabName);
+            activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+            activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+
             if (tabName === 'solicitudes') renderAdminSolicitudes();
             if (tabName === 'novedades') renderAdminNovedades();
             if (tabName === 'material') populateAdminMaterialForm();
@@ -915,15 +928,27 @@
             if (!solicitudes || solicitudes.length === 0) { container.innerHTML = `<p class="text-slate-500 text-sm py-4 text-center">No hay solicitudes pendientes.</p>`; return; }
             const { data: careers } = await _db.from('carreras').select('*');
             container.innerHTML = solicitudes.map(s => {
-                const car = careers.find(c => c.id === s.carrera);
+                const car = careers ? careers.find(c => c.id === s.carrera) : null;
                 const sugUser = s.nombre.toLowerCase().split(' ')[0] + Math.floor(Math.random() * 900 + 100);
-                return `<div class="bg-slate-50 rounded-2xl border border-slate-200 p-4 flex justify-between items-center gap-4"><div><h4 class="font-bold text-slate-900">${s.nombre} (DNI: ${s.dni})</h4><p class="text-xs text-slate-600">${car ? car.name : s.carrera} • ${s.anio}</p><p class="text-xs text-indigo-600">Correo: ${s.contacto}</p></div><button onclick="aprobarSolicitud(${s.id}, '${sugUser}', 'isfd2026', '${s.nombre}', '${s.dni}', '${s.carrera}', '${s.anio}', '${s.contacto}')" class="bg-emerald-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-md flex-shrink-0">Aprobar y Enviar Correo</button></div>`;
+                return `
+                    <div class="bg-slate-50 rounded-2xl border border-slate-200 p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h4 class="font-bold text-slate-900">${s.nombre} (DNI: ${s.dni})</h4>
+                            <p class="text-xs text-slate-600">${car ? car.name : s.carrera} • ${s.anio}</p>
+                            <p class="text-xs text-emerald-600 font-medium mt-1"><i class="fa-brands fa-whatsapp mr-1"></i>WhatsApp: ${s.contacto}</p>
+                        </div>
+                        <button onclick="aprobarSolicitud(${s.id}, '${sugUser}', 'isfd2026', '${s.nombre.replace(/'/g, "\\'")}', '${s.dni}', '${s.carrera}', '${s.anio}', '${s.contacto}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-md flex items-center space-x-1.5 flex-shrink-0">
+                            <i class="fa-brands fa-whatsapp text-sm"></i>
+                            <span>Aprobar y Enviar WhatsApp</span>
+                        </button>
+                    </div>
+                `;
             }).join('');
         }
 
-        // --- APROBAR Y REDACTAR CORREO INSTITUCIONAL PERSONALIZADO (Mejora solicitada) ---
+        // --- APROBAR Y ENVIAR CREDENCIALES POR WHATSAPP ---
         async function aprobarSolicitud(id, username, pass, nombre, dni, carrera, anio, contacto) {
-            // 1. Guardar el alumno en la tabla de la base de datos
+            // 1. Guardar el alumno en la tabla de Supabase
             const { error: errAlumno } = await _db.from('alumnos').insert([{ nombre, dni, carrera, anio, usuario: username, pass, contacto }]);
             if (errAlumno) {
                 alert('Error al crear alumno: ' + errAlumno.message);
@@ -933,24 +958,26 @@
             // 2. Eliminar la solicitud pendiente
             await _db.from('solicitudes').delete().eq('id', id);
 
-            // 3. Crear mensaje de correo único y personalizado con identidad institucional
-            const asunto = encodeURIComponent("¡Tus credenciales de acceso al Centro de Estudiantes - ISFD Mercedes!");
-            const cuerpo = encodeURIComponent(
-                `¡Hola, ${nombre}!\n\n` +
-                `Nos comunicamos desde el Centro de Estudiantes del Instituto Superior de Formación Docente Mercedes para informarte que tu solicitud de acceso a nuestra plataforma online ha sido APROBADA con éxito.\n\n` +
-                `A continuación, te compartimos tus datos de acceso institucional:\n` +
-                `• Usuario: ${username}\n` +
-                `• Contraseña temporal: ${pass}\n\n` +
-                `Ya podés ingresar al sitio web para descargar los apuntes oficiales de tu carrera, consultar fechas importantes de mesas de examen y participar del foro de consultas de cada materia.\n\n` +
-                `¡Te damos la bienvenida a nuestra comunidad estudiantil!\n\n` +
-                `Atentamente,\n` +
-                `Centro de Estudiantes - ISFD Mercedes`
+            // 3. Limpiar el número de teléfono y asegurar formato 549...
+            let telefonoLimpio = contacto.replace(/\D/g, '');
+            if (telefonoLimpio.startsWith('0')) telefonoLimpio = telefonoLimpio.substring(1);
+            if (!telefonoLimpio.startsWith('54')) telefonoLimpio = '549' + telefonoLimpio;
+
+            // 4. Redactar mensaje institucional único para WhatsApp
+            const mensajeWhatsApp = encodeURIComponent(
+                `¡Hola, *${nombre}*! 👋\n\n` +
+                `Te escribimos desde el *Centro de Estudiantes del ISFD Mercedes* para avisarte que tu solicitud de acceso a nuestra plataforma online fue *APROBADA*.\n\n` +
+                `🎓 *Tus credenciales de ingreso:*\n` +
+                `• *Usuario:* ${username}\n` +
+                `• *Contraseña:* ${pass}\n\n` +
+                `Ya podés ingresar a la web para descargar apuntes, ver fechas de mesas de examen y participar en los foros de tus materias.\n\n` +
+                `¡Éxitos en la cursada! 📚✨`
             );
 
-            // Abrir automáticamente el cliente de correo del admin listo para enviar
-            window.open(`mailto:${contacto}?subject=${asunto}&body=${cuerpo}`, '_blank');
+            // 5. Abrir WhatsApp Web / App con el mensaje listo
+            window.open(`https://wa.me/${telefonoLimpio}?text=${mensajeWhatsApp}`, '_blank');
 
-            alert(`¡Alumno aprobado con éxito!\n\nSe generó su usuario (${username}) y se abrió tu correo con el mensaje institucional redactado para enviar a: ${contacto}`);
+            alert(`¡Alumno aprobado!\n\nUsuario: ${username}\nContraseña: ${pass}\n\nSe abrió WhatsApp para enviarle las credenciales a ${contacto}.`);
             await renderAdminDashboard();
         }
 
@@ -1070,7 +1097,7 @@
             const { data: careers } = await _db.from('carreras').select('*');
             document.getElementById('admin-alumnos-tbody').innerHTML = (alumnos || []).map(al => {
                 const car = careers ? careers.find(c => c.id === al.carrera) : null;
-                return `<tr class="border-b"><td class="p-3 font-bold">${al.nombre}</td><td class="p-3">${al.dni}</td><td class="p-3">${car ? car.name : al.carrera} (${al.anio})</td><td class="p-3 font-mono text-indigo-600">${al.usuario} <br><span class="text-xs text-slate-500">${al.contacto}</span></td><td class="p-3 text-center"><button onclick="deleteAlumno(${al.id})" class="text-rose-600"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                return `<tr class="border-b"><td class="p-3 font-bold">${al.nombre}</td><td class="p-3">${al.dni}</td><td class="p-3">${car ? car.name : al.carrera} (${al.anio})</td><td class="p-3 font-mono text-indigo-600">${al.usuario} / ${al.pass}<br><span class="text-xs text-emerald-600 font-sans"><i class="fa-brands fa-whatsapp mr-1"></i>${al.contacto}</span></td><td class="p-3 text-center"><button onclick="deleteAlumno(${al.id})" class="text-rose-600"><i class="fa-solid fa-trash"></i></button></td></tr>`;
             }).join('');
         }
 
