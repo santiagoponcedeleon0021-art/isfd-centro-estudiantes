@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Estudiantes - ISFD</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+    <!-- HEADER / BARRA DE NAVEGACIÓN -->
+    <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo e Identidad -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('home')">
+                <div id="nav-logo-container" class="w-12 h-12 rounded-xl overflow-hidden bg-white/10 flex items-center justify-center border border-indigo-400/30 shadow-inner flex-shrink-0">
+                    <img id="nav-logo-img" src="logo.jpg" alt="Logo" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h1 id="brand-title" class="text-base sm:text-xl font-bold tracking-tight leading-tight">Centro de Estudiantes</h1>
+                    <p id="brand-subtitle" class="text-[11px] sm:text-xs text-indigo-200 font-medium">ISFD Mercedes • Corrientes</p>
+                </div>
+            </div>
+
+            <!-- Navegación y Acciones -->
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <nav class="hidden md:flex items-center space-x-1">
+                    <button onclick="switchView('home')" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-800 transition-colors">Inicio</button>
+                    <button onclick="switchView('carreras')" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-800 transition-colors">Carreras</button>
+                    <button onclick="switchView('novedades')" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-800 transition-colors">Novedades</button>
+                    <button onclick="switchView('solicitud')" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-800 transition-colors">Solicitar Usuario</button>
+                    <span id="nav-favoritos-link" class="hidden">
+                        <button onclick="switchView('favoritos')" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-800 transition-colors text-rose-300 flex items-center space-x-1"><i class="fa-solid fa-heart"></i><span>Mis Favoritos</span></button>
+                    </span>
+                </nav>
+
+                <div id="auth-nav-area" class="flex items-center space-x-3 border-l border-indigo-700 pl-3 sm:pl-4">
+                    <!-- Dinámico -->
+                </div>
+            </div>
+        </div>
+        <!-- Menú inferior responsive para celulares -->
+        <div class="md:hidden bg-indigo-950 px-4 py-2 flex justify-around text-xs border-t border-indigo-800">
+            <button onclick="switchView('home')" class="text-indigo-200 hover:text-white py-1"><i class="fa-solid fa-house mr-1"></i>Inicio</button>
+            <button onclick="switchView('carreras')" class="text-indigo-200 hover:text-white py-1"><i class="fa-solid fa-book mr-1"></i>Carreras</button>
+            <button onclick="switchView('novedades')" class="text-indigo-200 hover:text-white py-1"><i class="fa-solid fa-bullhorn mr-1"></i>Avisos</button>
+            <span id="mobile-favoritos-link" class="hidden">
+                <button onclick="switchView('favoritos')" class="text-rose-300 hover:text-white py-1"><i class="fa-solid fa-heart mr-1"></i>Favoritos</button>
+            </span>
+            <button onclick="switchView('solicitud')" class="text-indigo-200 hover:text-white py-1"><i class="fa-solid fa-id-card mr-1"></i>Usuario</button>
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-grow">
+        <!-- VISTA: INICIO -->
+        <section id="view-home" class="view-section">
+            <div class="bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white py-12 sm:py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+                <div class="max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                    <div class="lg:col-span-7 space-y-6">
+                        <span class="inline-flex items-center space-x-2 bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase border border-indigo-500/30">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <span>Plataforma Oficial del Alumnado</span>
+                        </span>
+                        <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                            Todo tu material de estudio y novedades en un solo lugar.
+                        </h2>
+                        <p class="text-base sm:text-lg text-indigo-100 font-normal max-w-2xl leading-relaxed">
+                            Accedé a los apuntes oficiales, enterate de las fechas importantes de exámenes, mesas y comunicados del Centro de Estudiantes del ISFD.
+                        </p>
+                        <div class="flex flex-wrap gap-4 pt-2">
+                            <button onclick="switchView('carreras')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg transition-all flex items-center space-x-2 text-sm sm:text-base">
+                                <span>Explorar Carreras</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                            <button onclick="switchView('novedades')" class="bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3 rounded-xl border border-white/20 transition-all text-sm sm:text-base">
+                                <i class="fa-solid fa-calendar-days mr-2"></i>Ver Calendario y Avisos
+                            </button>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-5 flex justify-center">
+                        <div class="bg-white/10 backdrop-blur-md p-5 sm:p-6 rounded-3xl border border-white/10 shadow-2xl w-full max-w-md space-y-4">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-9 h-9 rounded-xl bg-indigo-500 flex items-center justify-center text-white font-bold text-sm">
+                                        <i class="fa-solid fa-bullhorn"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-white text-sm">Último Aviso Importante</h3>
+                                        <p class="text-[11px] text-indigo-300">Tablero del Centro</p>
+                                    </div>
+                                </div>
+                                <span class="bg-emerald-500/20 text-emerald-300 text-[10px] px-2.5 py-1 rounded-full font-medium">Oficial</span>
+                            </div>
+                            <div id="hero-latest-notice" class="text-xs sm:text-sm text-indigo-100 space-y-2">
+                                <p class="text-xs text-indigo-200">Cargando avisos desde la nube...</p>
+                            </div>
+                            <button onclick="switchView('novedades')" class="w-full text-center text-xs font-semibold text-indigo-300 hover:text-white pt-2 block">
+                                Ver todas las novedades y fechas →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+                <div class="text-center max-w-3xl mx-auto mb-10">
+                    <h3 class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Oferta Académica</h3>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Seleccioná tu carrera para ver los apuntes</h2>
+                </div>
+                <div id="home-careers-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <div class="col-span-full text-center py-8 text-slate-500">Cargando carreras desde Supabase...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA: NOVEDADES Y CALENDARIO -->
+        <section id="view-novedades" class="view-section hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="mb-8">
+                <button onclick="switchView('home')" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold flex items-center space-x-2 mb-4">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Volver al inicio</span>
+                </button>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Novedades y Calendario Académico</h2>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-7 space-y-6">
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
+                        <i class="fa-solid fa-newspaper text-indigo-600"></i>
+                        <span>Últimos Comunicados</span>
+                    </h3>
+                    <div id="public-novedades-list" class="space-y-4"><p class="text-slate-500 text-sm">Cargando comunicados...</p></div>
+                </div>
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="bg-indigo-900 text-white rounded-3xl p-6 sm:p-8 shadow-lg relative overflow-hidden">
+                        <h3 class="text-lg font-bold mb-4 flex items-center space-x-2 relative z-10">
+                            <i class="fa-solid fa-calendar-check text-indigo-300"></i>
+                            <span>Próximas Fechas Clave</span>
+                        </h3>
+                        <div id="public-calendario-list" class="space-y-4 relative z-10"><p class="text-indigo-200 text-sm">Cargando calendario...</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA: CARRERAS -->
+        <section id="view-carreras" class="view-section hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="mb-8">
+                <button onclick="switchView('home')" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold flex items-center space-x-2 mb-4">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Volver al inicio</span>
+                </button>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Banco de Apuntes por Carrera</h2>
+            </div>
+            <div id="careers-tabs" class="flex flex-wrap gap-2 sm:gap-3 pb-6 border-b border-slate-200"></div>
+            <div id="career-detail-container" class="mt-8"></div>
+        </section>
+
+        <!-- VISTA: MATERIA / APUNTES + CHAT -->
+        <section id="view-materia" class="view-section hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="mb-6">
+                <button id="btn-back-to-career" onclick="" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold flex items-center space-x-2 mb-2">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Volver a los años de la carrera</span>
+                </button>
+                <h2 id="materia-title" class="text-2xl sm:text-3xl font-extrabold text-slate-900">Materia</h2>
+                <p id="materia-subtitle" class="text-slate-600 text-xs sm:text-sm mt-1">Apuntes y foro de consultas.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-8 space-y-6">
+                    <div class="mb-4">
+                        <input type="text" id="search-apuntes" oninput="filterApuntes()" placeholder="Buscar apunte..." class="bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm w-full sm:w-80 shadow-sm">
+                    </div>
+                    <div id="apuntes-list-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                </div>
+
+                <div class="lg:col-span-4 space-y-4">
+                    <div class="bg-white rounded-3xl border border-slate-200/90 shadow-md overflow-hidden sticky top-28">
+                        <!-- Encabezado del Foro -->
+                        <div class="bg-gradient-to-r from-indigo-900 to-indigo-800 px-5 py-4 text-white">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center space-x-2.5">
+                                    <div class="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center text-indigo-200">
+                                        <i class="fa-solid fa-comments text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-sm font-bold leading-tight">Foro de Consultas</h3>
+                                        <p class="text-[11px] text-indigo-200">Intercambio entre estudiantes</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span id="chat-count-badge" class="bg-white/15 text-indigo-100 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+                                    <span class="inline-flex items-center space-x-1 bg-emerald-500/20 border border-emerald-400/30 text-emerald-200 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                        <span>En vivo</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lista de mensajes -->
+                        <div id="materia-chat-list" class="p-4 space-y-3 max-h-96 overflow-y-auto bg-slate-50/70 text-xs">
+                            <p class="text-slate-400 text-center py-6">Cargando comentarios...</p>
+                        </div>
+
+                        <!-- Formulario de envío -->
+                        <form id="form-materia-chat" onsubmit="handleSendComentario(event)" class="p-4 bg-white border-t border-slate-200/80 space-y-2.5">
+                            <div class="relative">
+                                <i class="fa-regular fa-user text-slate-400 text-xs absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                                <input type="text" id="chat-autor" required placeholder="Tu nombre o apodo" class="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white focus:outline-none rounded-xl pl-9 pr-3.5 py-2 text-xs text-slate-800 transition-colors">
+                            </div>
+
+                            <!-- Banner de cita activa -->
+                            <div id="chat-reply-banner" class="hidden bg-indigo-50 border border-indigo-200/80 rounded-xl px-3 py-2 flex items-start justify-between gap-2 text-[11px]">
+                                <div class="min-w-0">
+                                    <span class="font-semibold text-indigo-700 block">Respondiendo a <span id="chat-reply-autor"></span></span>
+                                    <p id="chat-reply-preview" class="text-slate-600 truncate"></p>
+                                </div>
+                                <button type="button" onclick="clearChatReply()" class="text-slate-400 hover:text-rose-600 flex-shrink-0 pt-0.5" title="Cancelar cita">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+
+                            <textarea id="chat-mensaje" required rows="2" onkeydown="handleChatKeydown(event)" placeholder="Escribí una duda... (Enter envía, Shift+Enter nueva línea)" class="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white focus:outline-none rounded-xl px-3.5 py-2 text-xs text-slate-800 resize-none transition-colors"></textarea>
+                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white font-semibold py-2.5 rounded-xl text-xs shadow-sm transition-all flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                <span>Publicar Consulta</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA: MIS FAVORITOS -->
+        <section id="view-favoritos" class="view-section hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="mb-8">
+                <button onclick="switchView('home')" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold flex items-center space-x-2 mb-4">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Volver al inicio</span>
+                </button>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center space-x-2">
+                    <i class="fa-solid fa-heart text-rose-500"></i>
+                    <span>Mis Apuntes Favoritos</span>
+                </h2>
+                <p class="text-slate-600 text-xs sm:text-sm mt-1">Acceso directo al material que guardaste como favorito.</p>
+            </div>
+            <div id="favoritos-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <p class="text-slate-500 text-sm">Cargando favoritos...</p>
+            </div>
+        </section>
+
+        <!-- VISTA: SOLICITUD DE USUARIO -->
+        <section id="view-solicitud" class="view-section hidden max-w-3xl mx-auto px-4 py-10">
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-6 sm:p-10">
+                <div class="text-center max-w-lg mx-auto mb-8">
+                    <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Solicitar Alta de Usuario</h2>
+                    <p class="text-slate-600 text-xs sm:text-sm mt-2">Completá tus datos y elegí el usuario y contraseña con los que querés ingresar una vez que validemos tu inscripción.</p>
+                </div>
+                <form id="form-solicitud" onsubmit="handleSolicitudSubmit(event)" class="space-y-4 sm:space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Nombre y Apellido</label>
+                            <input type="text" id="sol-nombre" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="Ej: Juan Pérez">
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">DNI</label>
+                            <input type="text" id="sol-dni" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="Sin puntos">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Carrera</label>
+                            <select id="sol-carrera" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Año</label>
+                            <select id="sol-anio" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm">
+                                <option value="1° Año">1° Año</option>
+                                <option value="2° Año">2° Año</option>
+                                <option value="3° Año">3° Año</option>
+                                <option value="4° Año">4° Año</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Teléfono / WhatsApp de contacto</label>
+                        <input type="tel" id="sol-contacto" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="Ej: 3773412345">
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-100">
+                        <p class="text-xs font-bold text-indigo-700 uppercase tracking-wide mb-3">Elegí tus credenciales de acceso</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                            <div>
+                                <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Usuario deseado</label>
+                                <input type="text" id="sol-usuario" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="Ej: juanperez">
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Contraseña deseada</label>
+                                <input type="password" id="sol-pass" required minlength="4" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="Mínimo 4 caracteres">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg text-sm">Enviar Solicitud</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- VISTA: PANEL DE ADMINISTRACIÓN -->
+        <section id="view-admin" class="view-section hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-b border-slate-200 pb-6">
+                <div>
+                    <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full uppercase">Panel de Gestión Online</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Administración del Centro</h2>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="switchView('home')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-4 py-2.5 rounded-xl text-xs sm:text-sm">Ir al sitio</button>
+                    <button onclick="logout()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold px-4 py-2.5 rounded-xl text-xs sm:text-sm border border-rose-200">Salir</button>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-8 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm">
+                <button onclick="switchAdminTab('solicitudes')" id="tab-btn-solicitudes" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-indigo-600 text-white shadow-sm">Solicitudes <span id="badge-solicitudes-count" class="ml-1 bg-white text-indigo-600 px-2 py-0.5 rounded-full text-xs font-bold">0</span></button>
+                <button onclick="switchAdminTab('novedades')" id="tab-btn-novedades" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">Novedades</button>
+                <button onclick="switchAdminTab('material')" id="tab-btn-material" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">Cargar Material</button>
+                <button onclick="switchAdminTab('carreras')" id="tab-btn-carreras" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">Carreras y Materias</button>
+                <button onclick="switchAdminTab('alumnos')" id="tab-btn-alumnos" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">Alumnos</button>
+                <button onclick="switchAdminTab('identidad')" id="tab-btn-identidad" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100">Logo</button>
+            </div>
+
+            <div id="admin-tab-solicitudes" class="admin-tab-content space-y-6">
+                <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Solicitudes Pendientes de Aprobación</h3>
+                    <div id="admin-solicitudes-list" class="space-y-4"><p class="text-slate-500 text-sm">Cargando...</p></div>
+                </div>
+            </div>
+
+            <div id="admin-tab-novedades" class="admin-tab-content hidden space-y-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                        <h3 class="text-lg font-bold text-slate-900 mb-4">Publicar Aviso o Fecha Clave</h3>
+                        <form onsubmit="handleSaveNovedad(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tipo</label>
+                                <select id="nov-tipo" onchange="toggleNovFechaField()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                                    <option value="aviso">📢 Comunicado</option>
+                                    <option value="fecha">📅 Fecha Importante</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Título</label>
+                                <input type="text" id="nov-titulo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                            </div>
+                            <div id="div-nov-fecha" class="hidden">
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Fecha del Evento</label>
+                                <input type="text" id="nov-fecha-txt" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm" placeholder="Ej. 15 al 20 de Dic">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Descripción</label>
+                                <textarea id="nov-desc" rows="3" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm">Publicar</button>
+                        </form>
+                    </div>
+                    <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                        <h3 class="text-lg font-bold text-slate-900 mb-4">Publicaciones Activas</h3>
+                        <div id="admin-novedades-list" class="space-y-4 max-h-[500px] overflow-y-auto"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="admin-tab-material" class="admin-tab-content hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                        <h3 class="text-lg font-bold text-slate-900 mb-5">Subir Nuevo Apunte</h3>
+                        <form onsubmit="handleUploadMaterial(event)" class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Carrera</label>
+                                    <select id="up-carrera" onchange="updateAdminMateriasSelect()" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm"></select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Año</label>
+                                    <select id="up-anio" onchange="updateAdminMateriasSelect()" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                                        <option value="1° Año">1° Año</option>
+                                        <option value="2° Año">2° Año</option>
+                                        <option value="3° Año">3° Año</option>
+                                        <option value="4° Año">4° Año</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Materia</label>
+                                    <select id="up-materia" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm"></select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Formato</label>
+                                    <select id="up-tipo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                                        <option value="PDF">PDF (.pdf)</option>
+                                        <option value="DOCX">Word (.docx)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Título</label>
+                                <input type="text" id="up-titulo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Descripción</label>
+                                <textarea id="up-desc" rows="2" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Archivo</label>
+                                <input type="file" id="up-file" accept=".pdf,.doc,.docx" required class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700">
+                            </div>
+                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md text-sm">Subir Material</button>
+                        </form>
+                    </div>
+
+                    <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                            <h3 class="text-lg font-bold text-slate-900">Apuntes Subidos</h3>
+                            <input type="text" id="admin-search-apuntes" oninput="renderAdminApuntes()" placeholder="Filtrar por título o materia..." class="bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs w-full sm:w-64">
+                        </div>
+                        <div id="admin-apuntes-list" class="space-y-3 max-h-[600px] overflow-y-auto pr-1">
+                            <p class="text-slate-500 text-sm">Cargando apuntes...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="admin-tab-carreras" class="admin-tab-content hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <div class="lg:col-span-5 space-y-6">
+                        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                            <h3 class="text-lg font-bold text-slate-900 mb-4">Crear Carrera</h3>
+                            <form onsubmit="handleSaveCareer(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre</label>
+                                    <input type="text" id="car-nombre" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1">Tipo</label>
+                                        <select id="car-tipo" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                                            <option value="Profesorado">Profesorado</option>
+                                            <option value="Tecnicatura Superior">Tecnicatura</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1">Duración</label>
+                                        <select id="car-duracion" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                                            <option value="3">3 Años</option>
+                                            <option value="4" selected>4 Años</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Título</label>
+                                    <input type="text" id="car-titulo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Descripción</label>
+                                    <textarea id="car-desc" rows="2" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Materias de 1° Año (separadas por coma)</label>
+                                    <input type="text" id="car-materias-init" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                                </div>
+                                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm">Guardar Carrera</button>
+                            </form>
+                        </div>
+
+                        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                            <h3 class="text-lg font-bold text-slate-900 mb-4">Agregar Materia</h3>
+                            <form onsubmit="handleAddMateria(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Carrera</label>
+                                    <select id="mat-car-select" onchange="updateMatAnioSelect()" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm"></select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Año</label>
+                                    <select id="mat-anio-select" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm"></select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre</label>
+                                    <input type="text" id="mat-nombre-input" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                                </div>
+                                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-sm">Agregar</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                        <h3 class="text-lg font-bold text-slate-900 mb-4">Carreras y Materias Activas</h3>
+                        <div id="admin-careers-list" class="space-y-4 max-h-[750px] overflow-y-auto"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="admin-tab-alumnos" class="admin-tab-content hidden space-y-6">
+                <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Alumnos Registrados</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
+                                    <th class="p-3">Nombre</th>
+                                    <th class="p-3">DNI</th>
+                                    <th class="p-3">Carrera / Año</th>
+                                    <th class="p-3">Usuario / Contacto</th>
+                                    <th class="p-3 text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-alumnos-tbody" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="admin-tab-identidad" class="admin-tab-content hidden space-y-6">
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 max-w-3xl">
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Logo e Identidad</h3>
+                    <form onsubmit="handleSaveIdentity(event)" class="space-y-6">
+                        <div class="w-24 h-24 rounded-2xl bg-indigo-50 border-2 border-dashed border-indigo-300 flex items-center justify-center overflow-hidden">
+                            <img id="preview-logo-box" src="logo.jpg" alt="Logo" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Nombre</label>
+                            <input type="text" id="input-brand-name" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" value="Centro de Estudiantes">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Subtítulo</label>
+                            <input type="text" id="input-brand-subtitle" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" value="ISFD Mercedes • Corrientes">
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl overflow-hidden bg-white/10 flex items-center justify-center">
+                    <img src="logo.jpg" alt="Logo" class="w-full h-full object-cover footer-logo-img">
+                </div>
+                <div>
+                    <p id="footer-brand-title" class="text-white font-bold text-sm">Centro de Estudiantes - ISFD Mercedes</p>
+                    <p class="text-xs text-slate-500">Plataforma conectada a la nube.</p>
+                </div>
+            </div>
+            <div class="text-xs text-slate-500 text-center md:text-right">
+                <p>© 2026 Instituto Superior de Formación Docente Mercedes.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL DE LOGIN -->
+    <div id="login-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden p-8 relative">
+            <button onclick="closeLoginModal()" class="absolute right-6 top-6 text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mx-auto mb-3 overflow-hidden">
+                    <img src="logo.jpg" alt="Logo" class="w-full h-full object-cover modal-logo-img">
+                </div>
+                <h3 class="text-xl font-bold text-slate-900">Iniciar Sesión</h3>
+            </div>
+            <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Usuario</label>
+                    <input type="text" id="login-user" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="Tu usuario">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Contraseña</label>
+                    <input type="password" id="login-pass" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm" placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg">Ingresar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR ALUMNO -->
+    <div id="edit-alumno-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeEditAlumnoModal()" class="absolute right-6 top-6 text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-xl font-bold text-slate-900 mb-1">Editar Alumno</h3>
+            <p class="text-xs text-slate-500 mb-5">Modificá los datos o credenciales del estudiante.</p>
+            <form onsubmit="handleUpdateAlumno(event)" class="space-y-4">
+                <input type="hidden" id="edit-al-id">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre y Apellido</label>
+                        <input type="text" id="edit-al-nombre" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">DNI</label>
+                        <input type="text" id="edit-al-dni" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Carrera</label>
+                        <select id="edit-al-carrera" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Año</label>
+                        <select id="edit-al-anio" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                            <option value="1° Año">1° Año</option>
+                            <option value="2° Año">2° Año</option>
+                            <option value="3° Año">3° Año</option>
+                            <option value="4° Año">4° Año</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Teléfono / WhatsApp</label>
+                    <input type="text" id="edit-al-contacto" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Usuario</label>
+                        <input type="text" id="edit-al-usuario" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Contraseña</label>
+                        <input type="text" id="edit-al-pass" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-3">
+                    <button type="button" onclick="closeEditAlumnoModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Cancelar</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR NOVEDAD -->
+    <div id="edit-novedad-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden p-6 sm:p-8 relative">
+            <button onclick="closeEditNovedadModal()" class="absolute right-6 top-6 text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-xl font-bold text-slate-900 mb-1">Editar Publicación</h3>
+            <p class="text-xs text-slate-500 mb-5">Modificá el comunicado o fecha clave.</p>
+            <form onsubmit="handleUpdateNovedad(event)" class="space-y-4">
+                <input type="hidden" id="edit-nov-id">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tipo</label>
+                    <select id="edit-nov-tipo" onchange="toggleEditNovFechaField()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                        <option value="aviso">📢 Comunicado</option>
+                        <option value="fecha">📅 Fecha Importante</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Título</label>
+                    <input type="text" id="edit-nov-titulo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                </div>
+                <div id="div-edit-nov-fecha" class="hidden">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Fecha del Evento</label>
+                    <input type="text" id="edit-nov-fecha-txt" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm" placeholder="Ej. 15 al 20 de Dic">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Descripción</label>
+                    <textarea id="edit-nov-desc" rows="3" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm"></textarea>
+                </div>
+                <div class="flex justify-end space-x-2 pt-3">
+                    <button type="button" onclick="closeEditNovedadModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Cancelar</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR APUNTE -->
+    <div id="edit-apunte-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeEditApunteModal()" class="absolute right-6 top-6 text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-xl font-bold text-slate-900 mb-1">Editar Apunte</h3>
+            <p class="text-xs text-slate-500 mb-5">Modificá los datos del material o reemplazá el archivo.</p>
+            <form onsubmit="handleUpdateApunte(event)" class="space-y-4">
+                <input type="hidden" id="edit-ap-id">
+                <input type="hidden" id="edit-ap-current-url">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Carrera</label>
+                        <select id="edit-ap-carrera" onchange="updateEditApunteMateriasSelect()" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Año</label>
+                        <select id="edit-ap-anio" onchange="updateEditApunteMateriasSelect()" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                            <option value="1° Año">1° Año</option>
+                            <option value="2° Año">2° Año</option>
+                            <option value="3° Año">3° Año</option>
+                            <option value="4° Año">4° Año</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Materia</label>
+                        <select id="edit-ap-materia" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Formato</label>
+                        <select id="edit-ap-tipo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                            <option value="PDF">PDF (.pdf)</option>
+                            <option value="DOCX">Word (.docx)</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Título</label>
+                    <input type="text" id="edit-ap-titulo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Descripción</label>
+                    <textarea id="edit-ap-desc" rows="2" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Reemplazar archivo (opcional)</label>
+                    <input type="file" id="edit-ap-file" accept=".pdf,.doc,.docx" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700">
+                    <p class="text-[11px] text-slate-400 mt-1">Dejalo vacío si querés conservar el archivo actual.</p>
+                </div>
+                <div class="flex justify-end space-x-2 pt-3">
+                    <button type="button" onclick="closeEditApunteModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Cancelar</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPTS MODULARES -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        function toggleNovFechaField() {
+            const tipo = document.getElementById('nov-tipo').value;
+            const divFecha = document.getElementById('div-nov-fecha');
+            if (tipo === 'fecha') divFecha.classList.remove('hidden');
+            else divFecha.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+/* Estilos personalizados - Centro de Estudiantes ISFD Mercedes */
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+/* Animación suave al mostrar secciones o modales */
+.view-section:not(.hidden) {
+    animation: fadeInView 0.22s ease-out;
+}
+
+@keyframes fadeInView {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scrollbar discreto para el foro de consultas de cada materia */
+#materia-chat-list::-webkit-scrollbar,
+#admin-novedades-list::-webkit-scrollbar,
+#admin-careers-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#materia-chat-list::-webkit-scrollbar-track,
+#admin-novedades-list::-webkit-scrollbar-track,
+#admin-careers-list::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 9999px;
+}
+
+#materia-chat-list::-webkit-scrollbar-thumb,
+#admin-novedades-list::-webkit-scrollbar-thumb,
+#admin-careers-list::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+
+#materia-chat-list::-webkit-scrollbar-thumb:hover,
+#admin-novedades-list::-webkit-scrollbar-thumb:hover,
+#admin-careers-list::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Evitar desbordes en textos largos o enlaces de apuntes */
+.break-anywhere {
+    overflow-wrap: anywhere;
+}
+
+/* Mejoras estéticas del foro de consultas */
+@keyframes messagePop {
+    from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.99);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.chat-message-item {
+    animation: messagePop 0.2s ease-out;
+}
+
+#materia-chat-list {
+    background-image: radial-gradient(circle at top right, rgba(99, 102, 241, 0.04), transparent 55%);
+}
